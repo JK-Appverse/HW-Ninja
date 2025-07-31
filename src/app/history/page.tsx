@@ -6,7 +6,7 @@ import { getHistory, clearHistory, type HistoryItem } from "@/lib/history";
 import HistoryItemCard from "@/components/history-item";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Home, History, Trash2, PencilRuler } from "lucide-react";
+import { Home, History, Trash2, PencilRuler, Image } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SettingsPanel } from "@/components/settings-panel";
 
@@ -78,6 +78,14 @@ export default function HistoryPage() {
                             <Link href="/test">
                                 <PencilRuler />
                                 <span>Test Yourself</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                            <Link href="/visualizer">
+                                <Image />
+                                <span>Concept Visualizer</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

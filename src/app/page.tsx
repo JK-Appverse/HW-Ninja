@@ -13,6 +13,7 @@ import {
   Bot,
   PencilRuler,
   Camera,
+  Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -77,7 +78,9 @@ const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const showInterstitialAd = (): Promise<void> => {
   console.log("Interstitial Ad: दिखाने का प्रयास किया जा रहा है...");
   return new Promise((resolve) => {
-    // यहाँ पर आपको AdSense का Interstitial Ad कोड डालना है।
+    // =========================================================
+    // || यहाँ पर आपको AdSense का Interstitial Ad कोड डालना है। ||
+    // =========================================================
     // अभी के लिए, हम 1 सेकंड का इंतज़ार करके आगे बढ़ रहे हैं।
     setTimeout(() => {
       console.log("Interstitial Ad: पूरा हुआ (सैंपल)।");
@@ -90,7 +93,9 @@ const showInterstitialAd = (): Promise<void> => {
 const showRewardedAd = (): Promise<boolean> => {
   console.log("Rewarded Ad: दिखाने का प्रयास किया जा रहा है...");
   return new Promise((resolve) => {
-    // यहाँ पर आपको AdSense का Rewarded Ad कोड डालना है।
+    // =====================================================
+    // || यहाँ पर आपको AdSense का Rewarded Ad कोड डालना है। ||
+    // =====================================================
     // कोड यह बताएगा कि यूज़र ने विज्ञापन पूरा देखा है या नहीं।
     // अभी के लिए, हम मान रहे हैं कि यूज़र ने विज्ञापन देख लिया है।
     const adWatched = true; 
@@ -223,7 +228,7 @@ export default function HWNinjaPage() {
         solution: solution.solution,
         gradeLevel: parseInt(gradeLevel, 10),
         userName,
-        language: language || 'en', // भाषा भेजना
+        language: language || undefined,
       });
       setSimpleExplanation(result.simpleExplanation);
       setAiMessage("Hope this makes it crystal clear!");
@@ -307,6 +312,14 @@ export default function HWNinjaPage() {
                     <PencilRuler />
                     <span>Test Yourself</span>
                   </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                    <Link href="/visualizer">
+                        <Image />
+                        <span>Concept Visualizer</span>
+                    </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

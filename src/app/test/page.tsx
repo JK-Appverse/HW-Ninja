@@ -35,7 +35,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { generateTest, type GenerateTestOutput } from '@/ai/flows/generate-test-flow';
 import TestResult from '@/components/test-result';
-import { Home, History, PencilRuler, Loader2, Timer } from 'lucide-react';
+import { Home, History, PencilRuler, Loader2, Timer, Image } from 'lucide-react';
 import { SettingsPanel } from '@/components/settings-panel';
 import { useToast } from '@/hooks/use-toast';
 
@@ -321,6 +321,14 @@ export default function TestPage() {
                     <PencilRuler />
                     <span>Test Yourself</span>
                   </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                    <Link href="/visualizer">
+                        <Image />
+                        <span>Concept Visualizer</span>
+                    </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
