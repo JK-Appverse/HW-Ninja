@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Paintbrush, Settings, Moon, Sun } from "lucide-react";
+import { Settings, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const themes = [
@@ -24,14 +24,19 @@ export const SettingsPanel: React.FC = () => {
         setMounted(true);
         const savedTheme = localStorage.getItem("app-theme");
         if (savedTheme) {
-            applyTheme(themes.find(t => t.name === savedTheme) || themes[0]);
+            const foundTheme = themes.find(t => t.name === savedTheme);
+            if (foundTheme) {
+                applyTheme(foundTheme);
+            }
         }
-    }, [])
+    }, []);
 
     const applyTheme = (theme: {name: string, bg: string; primary: string}) => {
         const root = document.documentElement;
         if (document.body.classList.contains('dark')) {
-            // Don't apply light themes in dark mode
+            // In dark mode, we just set the primary, not the background.
+            root.style.setProperty("--primary", theme.primary);
+            localStorage.setItem("app-theme", theme.name);
             return;
         }
         root.style.setProperty("--background", theme.bg);
@@ -39,8 +44,28 @@ export const SettingsPanel: React.FC = () => {
         localStorage.setItem("app-theme", theme.name);
     }
   
+    // This effect ensures the theme is reapplied when switching between light/dark mode
+    useEffect(() => {
+        if (mounted) {
+             const savedThemeName = localStorage.getItem("app-theme");
+             const savedTheme = themes.find(t => t.name === savedThemeName);
+             if (theme === 'dark') {
+                // Remove custom background when going to dark mode
+                document.documentElement.style.removeProperty('--background');
+             } else if (savedTheme) {
+                // Re-apply theme when going to light mode
+                applyTheme(savedTheme);
+             }
+        }
+    }, [theme, mounted]);
+
     if (!mounted) {
-      return null
+      return (
+        <Button variant="ghost" className="w-full justify-start" disabled>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+        </Button>
+      );
     }
 
     return (
@@ -82,7 +107,6 @@ export const SettingsPanel: React.FC = () => {
                                     size="icon" 
                                     className="h-8 w-8"
                                     onClick={() => applyTheme(colorTheme)}
-                                    disabled={theme === 'dark'}
                                 >
                                     <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${colorTheme.primary})`}}></div>
                                 </Button>
