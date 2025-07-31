@@ -31,7 +31,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
     if (typeof solution.isCorrect !== "boolean") return null;
 
     return solution.isCorrect ? (
-      <Badge variant="secondary" className="border-green-500 bg-green-100 text-green-800">
+      <Badge variant="secondary" className="border-green-500 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
         <CheckCircle2 className="mr-2 h-4 w-4" />
         Correct
       </Badge>
@@ -47,7 +47,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
     <Card className="w-full animate-in fade-in-50 slide-in-from-bottom-10 duration-500">
       <CardHeader>
         <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold font-headline text-accent">Solution</CardTitle>
+            <CardTitle className="text-2xl font-bold font-headline text-primary">Solution</CardTitle>
             {testMode && <CorrectnessBadge />}
         </div>
         <CardDescription>Here's the detailed answer and explanation.</CardDescription>
@@ -74,7 +74,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                 <Separator />
                 <div>
                     <h3 className="mb-2 flex items-center text-lg font-semibold">
-                        <Lightbulb className="mr-2 h-5 w-5 text-primary" />
+                        <Lightbulb className="mr-2 h-5 w-5 text-yellow-400" />
                         Simplified Explanation:
                     </h3>
                     {isLoadingExplanation ? (

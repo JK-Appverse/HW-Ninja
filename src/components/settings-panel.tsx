@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Paintbrush, Settings } from "lucide-react";
+import { Paintbrush, Settings, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
@@ -17,6 +18,7 @@ const themes = [
 
 export const SettingsPanel: React.FC = () => {
     const [mounted, setMounted] = useState(false);
+    const { theme, setTheme } = useTheme();
     
     useEffect(() => {
         setMounted(true);
@@ -28,6 +30,10 @@ export const SettingsPanel: React.FC = () => {
 
     const applyTheme = (theme: {name: string, bg: string; primary: string}) => {
         const root = document.documentElement;
+        if (document.body.classList.contains('dark')) {
+            // Don't apply light themes in dark mode
+            return;
+        }
         root.style.setProperty("--background", theme.bg);
         root.style.setProperty("--primary", theme.primary);
         localStorage.setItem("app-theme", theme.name);
@@ -47,26 +53,38 @@ export const SettingsPanel: React.FC = () => {
             </PopoverTrigger>
             <PopoverContent className="w-64">
                 <div className="grid gap-4">
-                    <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Theme</h4>
+                     <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Appearance</h4>
                         <p className="text-sm text-muted-foreground">
-                            Customize the app's appearance.
+                            Customize the look and feel.
                         </p>
                     </div>
                     <div className="grid gap-2">
-                        <div className="flex items-center space-x-2">
-                            <Label htmlFor="theme">Color</Label>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="theme-mode">Mode</Label>
+                            <div className="flex items-center gap-2">
+                                <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("light")}>
+                                    <Sun className="h-4 w-4" />
+                                </Button>
+                                <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("dark")}>
+                                    <Moon className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="theme-color">Color</Label>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {themes.map(theme => (
+                            {themes.map(colorTheme => (
                                 <Button 
-                                    key={theme.name} 
+                                    key={colorTheme.name} 
                                     variant="outline" 
                                     size="icon" 
                                     className="h-8 w-8"
-                                    onClick={() => applyTheme(theme)}
+                                    onClick={() => applyTheme(colorTheme)}
+                                    disabled={theme === 'dark'}
                                 >
-                                    <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${theme.primary})`}}></div>
+                                    <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${colorTheme.primary})`}}></div>
                                 </Button>
                             ))}
                         </div>

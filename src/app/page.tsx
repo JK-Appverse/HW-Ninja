@@ -247,7 +247,7 @@ export default function SmartAcePage() {
           </header>
 
           <main className="flex flex-col gap-8 p-4 sm:p-8">
-            <Card className="overflow-hidden border-2 border-primary/20 shadow-lg">
+            <Card className="overflow-hidden border-2 border-primary/20 shadow-lg animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
                   <div>
@@ -321,7 +321,7 @@ export default function SmartAcePage() {
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-5 animate-in fade-in-50 slide-in-from-bottom-5 duration-500 delay-100">
               <div className="lg:col-span-3">
                 <Tabs defaultValue="type">
                   <TabsList className="grid w-full grid-cols-2">
@@ -412,15 +412,15 @@ export default function SmartAcePage() {
                 </Tabs>
               </div>
               <div className="flex items-start gap-4 lg:col-span-2">
-                <Bot className="h-20 w-20 flex-shrink-0 text-accent" />
-                <div className="relative rounded-lg bg-card p-4 shadow-sm">
+                <Bot className="h-20 w-20 flex-shrink-0 text-primary animate-pulse" />
+                <div className="relative rounded-lg bg-muted p-4 shadow-sm">
                   <p className="text-sm">{aiMessage}</p>
-                  <div className="absolute -left-2 top-4 h-4 w-4 -translate-y-1/2 rotate-45 bg-card"></div>
+                  <div className="absolute -left-2 top-4 h-4 w-4 -translate-y-1/2 rotate-45 bg-muted"></div>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center animate-in fade-in-50 slide-in-from-bottom-5 duration-500 delay-200">
               <Button
                 size="lg"
                 className="bg-gradient-to-br from-primary to-blue-400 font-bold text-primary-foreground shadow-lg transition-transform hover:scale-105"
