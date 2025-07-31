@@ -313,7 +313,7 @@ export default function SmartAcePage() {
                   </div>
                    <div>
                     <Label htmlFor="language" className="font-medium">
-                      Language
+                      Language (Optional)
                     </Label>
                     <Input id="language" placeholder="e.g., Hindi" className="mt-2" value={language} onChange={(e) => setLanguage(e.target.value)} />
                   </div>

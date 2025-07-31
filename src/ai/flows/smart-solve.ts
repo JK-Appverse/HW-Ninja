@@ -50,6 +50,8 @@ const smartSolvePrompt = ai.definePrompt({
   prompt: `You are an expert tutor for {{{subject}}} for a student in grade {{{gradeLevel}}}. The difficulty of the question is {{{difficultyLevel}}}. Please solve the following homework question and provide a clear and concise explanation. If a student answer is provided, determine if it is correct.
 {{#if language}}
 Respond in the following language: {{{language}}}.
+{{else}}
+Detect the language of the question and respond in that same language.
 {{/if}}
 
 Question: {{{question}}}
