@@ -6,6 +6,7 @@ import { Providers } from './providers';
 export const metadata: Metadata = {
   title: 'HW Ninja',
   description: 'Your Smart AI Homework Solver',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
