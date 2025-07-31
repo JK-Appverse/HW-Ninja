@@ -72,6 +72,41 @@ const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
+// *** विज्ञापन के लिए फंक्शन ***
+// गूगल एडसेंस से मिले असली कोड को यहाँ डालें।
+const showInterstitialAd = (): Promise<void> => {
+  console.log("Interstitial Ad: दिखाने का प्रयास किया जा रहा है...");
+  return new Promise((resolve) => {
+    // यहाँ पर आपको AdSense का Interstitial Ad कोड डालना है।
+    // अभी के लिए, हम 1 सेकंड का इंतज़ार करके आगे बढ़ रहे हैं।
+    setTimeout(() => {
+      console.log("Interstitial Ad: पूरा हुआ (सैंपल)।");
+      resolve();
+    }, 1000);
+  });
+};
+
+// इनाम वाले विज्ञापन के लिए फंक्शन
+const showRewardedAd = (): Promise<boolean> => {
+  console.log("Rewarded Ad: दिखाने का प्रयास किया जा रहा है...");
+  return new Promise((resolve) => {
+    // यहाँ पर आपको AdSense का Rewarded Ad कोड डालना है।
+    // कोड यह बताएगा कि यूज़र ने विज्ञापन पूरा देखा है या नहीं।
+    // अभी के लिए, हम मान रहे हैं कि यूज़र ने विज्ञापन देख लिया है।
+    const adWatched = true; 
+    setTimeout(() => {
+        if(adWatched){
+            console.log("Rewarded Ad: इनाम दिया गया (सैंपल)।");
+            resolve(true);
+        } else {
+            console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया (सैंपल)।");
+            resolve(false);
+        }
+    }, 1500);
+  });
+};
+
+
 export default function HWNinjaPage() {
   const [gradeLevel, setGradeLevel] = useState("8");
   const [subject, setSubject] = useState("Maths");
@@ -83,6 +118,7 @@ export default function HWNinjaPage() {
   const [testMode, setTestMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isExplaining, setIsExplaining] = useState(false);
+  const [isShowingAd, setIsShowingAd] = useState(false);
   const [solution, setSolution] = useState<SmartSolveOutput | null>(null);
   const [simpleExplanation, setSimpleExplanation] = useState<string | null>(
     null
@@ -128,6 +164,17 @@ export default function HWNinjaPage() {
     setSolution(null);
     setSimpleExplanation(null);
     setAiMessage("Let me think... I'm working on the solution now!");
+
+    // विज्ञापन दिखाने का लॉजिक
+    try {
+        setIsShowingAd(true);
+        setAiMessage("Loading an ad before we solve...");
+        await showInterstitialAd();
+        setIsShowingAd(false);
+    } catch (adError) {
+        console.error("Ad error:", adError);
+        setIsShowingAd(false); // विज्ञापन में गड़बड़ी होने पर भी जारी रखें
+    }
 
     try {
       const input = {
@@ -176,7 +223,7 @@ export default function HWNinjaPage() {
         solution: solution.solution,
         gradeLevel: parseInt(gradeLevel, 10),
         userName,
-        language,
+        language: language || 'en', // भाषा भेजना
       });
       setSimpleExplanation(result.simpleExplanation);
       setAiMessage("Hope this makes it crystal clear!");
@@ -193,8 +240,35 @@ export default function HWNinjaPage() {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrint = async () => {
+    setIsShowingAd(true);
+    setAiMessage("Watch a short ad to download the PDF.");
+    try {
+        const adWatched = await showRewardedAd();
+        if (adWatched) {
+            toast({
+                title: "Thanks for watching!",
+                description: "Your download is starting.",
+            });
+            window.print();
+        } else {
+             toast({
+                title: "Ad not completed",
+                description: "Please watch the full ad to download.",
+                variant: "destructive"
+            });
+        }
+    } catch (adError) {
+        console.error("Rewarded ad error:", adError);
+        toast({
+            title: "Ad Error",
+            description: "Could not load the ad. Please try again.",
+            variant: "destructive"
+        });
+    } finally {
+        setIsShowingAd(false);
+        setAiMessage("How can I help you next?");
+    }
   };
 
   return (
@@ -439,9 +513,9 @@ export default function HWNinjaPage() {
                 size="lg"
                 className="bg-gradient-to-br from-primary to-blue-400 font-bold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                 onClick={handleSolve}
-                disabled={isLoading}
+                disabled={isLoading || isShowingAd}
               >
-                {isLoading ? (
+                {isLoading || isShowingAd ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
                   <Wand2 className="mr-2 h-5 w-5" />
@@ -453,7 +527,7 @@ export default function HWNinjaPage() {
                 variant="secondary"
                 className="font-bold shadow-lg transition-transform hover:scale-105"
                 onClick={handleExplain}
-                disabled={!solution || isExplaining}
+                disabled={!solution || isExplaining || isShowingAd}
               >
                 {isExplaining ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -467,9 +541,13 @@ export default function HWNinjaPage() {
                 variant="outline"
                 className="font-bold shadow-lg transition-transform hover:scale-105"
                 onClick={handlePrint}
-                disabled={!solution}
+                disabled={!solution || isShowingAd}
               >
-                <FileDown className="mr-2 h-5 w-5" />
+                 {isShowingAd ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <FileDown className="mr-2 h-5 w-5" />
+                )}
                 Save as PDF
               </Button>
             </div>
