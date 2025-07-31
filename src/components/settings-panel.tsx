@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Settings, Moon, Sun } from "lucide-react";
+import { Settings, Moon, Sun, Save } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Input } from "./ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
@@ -15,11 +17,16 @@ const themes = [
     { name: "Blue", bg: "204 100% 96.3%", primary: "217.2 91.2% 59.8%" }
 ];
 
+interface SettingsPanelProps {
+    onNameChange: (name: string) => void;
+}
 
-export const SettingsPanel: React.FC = () => {
+export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) => {
     const [mounted, setMounted] = useState(false);
     const { theme, setTheme } = useTheme();
     const [colorTheme, setColorTheme] = useState(themes[0]);
+    const [userName, setUserName] = useState('');
+    const { toast } = useToast();
     
     useEffect(() => {
         setMounted(true);
@@ -28,6 +35,10 @@ export const SettingsPanel: React.FC = () => {
             const foundTheme = themes.find(t => t.name === savedThemeName) || themes[0];
             setColorTheme(foundTheme);
         }
+        const savedUserName = localStorage.getItem("user-name");
+        if (savedUserName) {
+            setUserName(savedUserName);
+        }
     }, []);
 
     const applyTheme = (themeToApply: {name: string, bg: string; primary: string}) => {
@@ -35,16 +46,26 @@ export const SettingsPanel: React.FC = () => {
         setColorTheme(themeToApply);
         localStorage.setItem("app-theme", themeToApply.name);
         
-        root.style.setProperty("--primary", themeToApply.primary);
-        root.style.setProperty("--sidebar-primary", themeToApply.primary);
-        root.style.setProperty("--sidebar-ring", themeToApply.primary);
-        root.style.setProperty("--ring", themeToApply.primary);
-
+        const style = root.style;
+        style.setProperty("--primary", themeToApply.primary);
+        style.setProperty("--sidebar-primary", themeToApply.primary);
+        style.setProperty("--sidebar-ring", themeToApply.primary);
+        style.setProperty("--ring", themeToApply.primary);
+        
         if (theme === 'light') {
-           root.style.setProperty("--background", themeToApply.bg);
+           style.setProperty("--background", themeToApply.bg);
         } else {
-            root.style.removeProperty('--background');
+            style.removeProperty('--background');
         }
+    }
+
+    const handleSaveName = () => {
+        localStorage.setItem("user-name", userName);
+        onNameChange(userName);
+        toast({
+            title: "Success!",
+            description: "Your name has been saved.",
+        });
     }
   
     useEffect(() => {
@@ -71,15 +92,15 @@ export const SettingsPanel: React.FC = () => {
                     <span>Settings</span>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64">
-                <div className="grid gap-4">
+            <PopoverContent className="w-80">
+                <div className="grid gap-6">
                      <div className="space-y-2">
                         <h4 className="font-medium leading-none">Appearance</h4>
                         <p className="text-sm text-muted-foreground">
                             Customize the look and feel.
                         </p>
                     </div>
-                    <div className="grid gap-2">
+                    <div className="grid gap-4">
                         <div className="flex items-center justify-between">
                             <Label htmlFor="theme-mode">Mode</Label>
                             <div className="flex items-center gap-2">
@@ -91,21 +112,34 @@ export const SettingsPanel: React.FC = () => {
                                 </Button>
                             </div>
                         </div>
-                        <div className="flex items-center justify-between">
+                        <div className="space-y-2">
                             <Label htmlFor="theme-color">Color</Label>
+                             <div className="flex flex-wrap gap-2">
+                                {themes.map(ct => (
+                                    <Button 
+                                        key={ct.name} 
+                                        variant="outline" 
+                                        size="icon" 
+                                        className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
+                                        onClick={() => applyTheme(ct)}
+                                    >
+                                        <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
+                                    </Button>
+                                ))}
+                            </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                            {themes.map(ct => (
-                                <Button 
-                                    key={ct.name} 
-                                    variant="outline" 
-                                    size="icon" 
-                                    className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
-                                    onClick={() => applyTheme(ct)}
-                                >
-                                    <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
-                                </Button>
-                            ))}
+                    </div>
+                     <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Profile</h4>
+                        <p className="text-sm text-muted-foreground">
+                           Set your name for a personalized experience.
+                        </p>
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="user-name">Name</Label>
+                        <div className="flex items-center gap-2">
+                            <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Your name" />
+                            <Button size="icon" onClick={handleSaveName}><Save className="h-4 w-4" /></Button>
                         </div>
                     </div>
                 </div>

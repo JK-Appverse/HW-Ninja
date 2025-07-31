@@ -15,6 +15,7 @@ const ExplainSimplyInputSchema = z.object({
   question: z.string().describe('The question to be explained.'),
   solution: z.string().describe('The solution to the question.'),
   gradeLevel: z.number().describe('The grade level of the student.'),
+  userName: z.string().optional().describe("The user's name."),
 });
 export type ExplainSimplyInput = z.infer<typeof ExplainSimplyInputSchema>;
 
@@ -32,6 +33,10 @@ const prompt = ai.definePrompt({
   input: {schema: ExplainSimplyInputSchema},
   output: {schema: ExplainSimplyOutputSchema},
   prompt: `You are an expert tutor, skilled at explaining complex topics in simple terms.
+
+  {{#if userName}}
+  Address the user by their name: {{{userName}}}.
+  {{/if}}
 
   The student is in grade level: {{{gradeLevel}}}.
 

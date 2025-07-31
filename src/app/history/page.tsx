@@ -84,7 +84,7 @@ export default function HistoryPage() {
                     </SidebarMenu>
                 </SidebarContent>
                  <SidebarFooter>
-                    <SettingsPanel />
+                    <SettingsPanel onNameChange={() => {}}/>
                 </SidebarFooter>
             </Sidebar>
             <SidebarInset>

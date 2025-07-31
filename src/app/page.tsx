@@ -77,6 +77,7 @@ export default function HWNinjaPage() {
   const [difficulty, setDifficulty] = useState("Medium");
   const [question, setQuestion] = useState("");
   const [language, setLanguage] = useState("");
+  const [userName, setUserName] = useState("");
   const [studentAnswer, setStudentAnswer] = useState("");
   const [testMode, setTestMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,6 +93,14 @@ export default function HWNinjaPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("user-name");
+    if (storedName) {
+      setUserName(storedName);
+      setAiMessage(`Hi ${storedName}! How can I help you today?`);
+    }
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -128,6 +137,7 @@ export default function HWNinjaPage() {
         ...(testMode && { studentAnswer }),
         ...(image && { photoDataUri: image }),
         ...(language && { language }),
+        ...(userName && { userName }),
       };
       const result = await smartSolve(input);
       setSolution(result);
@@ -164,6 +174,7 @@ export default function HWNinjaPage() {
         question,
         solution: solution.solution,
         gradeLevel: parseInt(gradeLevel, 10),
+        userName,
       });
       setSimpleExplanation(result.simpleExplanation);
       setAiMessage("Hope this makes it crystal clear!");
@@ -225,7 +236,7 @@ export default function HWNinjaPage() {
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
-            <SettingsPanel />
+            <SettingsPanel onNameChange={setUserName} />
           </SidebarFooter>
         </Sidebar>
 

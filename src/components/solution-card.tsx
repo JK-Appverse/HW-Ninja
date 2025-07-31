@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { type SmartSolveOutput } from "@/ai/flows/smart-solve";
 import {
   Card,
@@ -8,11 +8,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Lightbulb } from "lucide-react";
+import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "./ui/button";
 
 interface SolutionCardProps {
   solution: SmartSolveOutput;
@@ -27,6 +29,8 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
   testMode,
   isLoadingExplanation,
 }) => {
+  const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+
   const CorrectnessBadge = () => {
     if (typeof solution.isCorrect !== "boolean") return null;
 
@@ -91,8 +95,26 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                 </div>
             </>
         )}
-
       </CardContent>
+      <CardFooter className="flex justify-end gap-2">
+            <p className="text-sm text-muted-foreground mr-auto">Was this helpful?</p>
+            <Button 
+                variant={feedback === 'like' ? 'secondary' : 'ghost'} 
+                size="icon" 
+                onClick={() => setFeedback('like')}
+                className={feedback === 'like' ? 'text-green-500' : ''}
+                >
+                <ThumbsUp className="h-5 w-5"/>
+            </Button>
+             <Button 
+                variant={feedback === 'dislike' ? 'secondary' : 'ghost'} 
+                size="icon" 
+                onClick={() => setFeedback('dislike')}
+                className={feedback === 'dislike' ? 'text-red-500' : ''}
+                >
+                <ThumbsDown className="h-5 w-5"/>
+            </Button>
+      </CardFooter>
     </Card>
   );
 };

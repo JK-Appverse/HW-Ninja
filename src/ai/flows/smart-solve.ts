@@ -29,6 +29,7 @@ const SmartSolveInputSchema = z.object({
   difficultyLevel: z.enum(['Easy', 'Medium', 'Hard']).describe('The difficulty level of the question.'),
   studentAnswer: z.string().optional().describe('The student answer, if test mode is on.'),
   language: z.string().optional().describe('The language of the response.'),
+  userName: z.string().optional().describe("The user's name."),
 });
 export type SmartSolveInput = z.infer<typeof SmartSolveInputSchema>;
 
@@ -48,6 +49,9 @@ const smartSolvePrompt = ai.definePrompt({
   input: {schema: SmartSolveInputSchema},
   output: {schema: SmartSolveOutputSchema},
   prompt: `You are an expert tutor for {{{subject}}} for a student in grade {{{gradeLevel}}}. The difficulty of the question is {{{difficultyLevel}}}. Please solve the following homework question and provide a clear and concise explanation. If a student answer is provided, determine if it is correct.
+{{#if userName}}
+Address the user by their name: {{{userName}}}.
+{{/if}}
 {{#if language}}
 Respond in the following language: {{{language}}}.
 {{else}}

@@ -326,7 +326,7 @@ export default function TestPage() {
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
-            <SettingsPanel />
+            <SettingsPanel onNameChange={() => {}}/>
           </SidebarFooter>
         </Sidebar>
 
