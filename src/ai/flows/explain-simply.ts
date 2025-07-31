@@ -16,6 +16,7 @@ const ExplainSimplyInputSchema = z.object({
   solution: z.string().describe('The solution to the question.'),
   gradeLevel: z.number().describe('The grade level of the student.'),
   userName: z.string().optional().describe("The user's name."),
+  language: z.string().optional().describe('The language of the response.'),
 });
 export type ExplainSimplyInput = z.infer<typeof ExplainSimplyInputSchema>;
 
@@ -36,6 +37,12 @@ const prompt = ai.definePrompt({
 
   {{#if userName}}
   Address the user by their name: {{{userName}}}.
+  {{/if}}
+
+  {{#if language}}
+  Respond in the following language: {{{language}}}.
+  {{else}}
+  Detect the language of the question and respond in that same language.
   {{/if}}
 
   The student is in grade level: {{{gradeLevel}}}.

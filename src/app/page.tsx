@@ -176,6 +176,7 @@ export default function HWNinjaPage() {
         solution: solution.solution,
         gradeLevel: parseInt(gradeLevel, 10),
         userName,
+        language,
       });
       setSimpleExplanation(result.simpleExplanation);
       setAiMessage("Hope this makes it crystal clear!");
@@ -259,7 +260,7 @@ export default function HWNinjaPage() {
                     </Label>
                     <Select
                       value={gradeLevel}
-                      onValuechange={setGradeLevel}
+                      onValueChange={setGradeLevel}
                       name="grade-level"
                     >
                       <SelectTrigger id="grade-level" className="mt-2">
