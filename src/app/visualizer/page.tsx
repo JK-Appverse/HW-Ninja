@@ -26,9 +26,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Skeleton } from '@/components/ui/skeleton';
 import { generateImage } from '@/ai/flows/generate-image-flow';
-import { Home, History, PencilRuler, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
+import { Home, History, PencilRuler, Image as ImageIcon, Loader2, Wand2, ThumbsUp, ThumbsDown, Download } from 'lucide-react';
 import { SettingsPanel } from '@/components/settings-panel';
 import { useToast } from '@/hooks/use-toast';
 
@@ -43,6 +42,7 @@ export default function VisualizerPage() {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<'like' | 'dislike' | null>(null);
   const { toast } = useToast();
 
   const handleGenerateImage = async () => {
@@ -57,6 +57,7 @@ export default function VisualizerPage() {
 
     setIsLoading(true);
     setGeneratedImage(null);
+    setFeedback(null);
 
     try {
       const result = await generateImage({ prompt });
@@ -72,6 +73,22 @@ export default function VisualizerPage() {
       setIsLoading(false);
     }
   };
+
+  const handleDownload = () => {
+    if (!generatedImage) return;
+    const link = document.createElement('a');
+    link.href = generatedImage;
+    // Sanitize prompt for filename
+    const fileName = `hwninja-${prompt.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+     toast({
+        title: 'Download Started',
+        description: 'The image is being saved to your device.',
+      });
+  }
 
   return (
     <SidebarProvider>
@@ -169,6 +186,31 @@ export default function VisualizerPage() {
                         className="w-full h-auto rounded-lg border shadow-md"
                       />
                     </CardContent>
+                     <CardFooter className="flex items-center gap-2 p-4">
+                        <p className="text-sm text-muted-foreground mr-auto">Was this image helpful?</p>
+                        <Button 
+                            variant={feedback === 'like' ? 'secondary' : 'ghost'} 
+                            size="icon" 
+                            onClick={() => setFeedback('like')}
+                            className={feedback === 'like' ? 'text-green-500' : ''}
+                            aria-label="Like"
+                        >
+                            <ThumbsUp className="h-5 w-5"/>
+                        </Button>
+                        <Button 
+                            variant={feedback === 'dislike' ? 'secondary' : 'ghost'} 
+                            size="icon" 
+                            onClick={() => setFeedback('dislike')}
+                            className={feedback === 'dislike' ? 'text-red-500' : ''}
+                             aria-label="Dislike"
+                        >
+                            <ThumbsDown className="h-5 w-5"/>
+                        </Button>
+                        <Button variant="outline" onClick={handleDownload}>
+                            <Download className="mr-2 h-4 w-4"/>
+                            Download
+                        </Button>
+                    </CardFooter>
                   </Card>
                 )}
               </div>
