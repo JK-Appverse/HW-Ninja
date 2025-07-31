@@ -10,19 +10,21 @@ import { Home, History, Trash2, PencilRuler } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SettingsPanel } from "@/components/settings-panel";
 
-const SmartAceLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+        {...props}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-      <path d="m9 9.5 2 2 4-4" />
+        <path
+            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
+            fill="currentColor"
+        />
+        <path
+            d="M12 6C9.24 6 7 8.24 7 11C7 12.3 7.55 13.45 8.42 14.28L12 18L15.58 14.28C16.45 13.45 17 12.3 17 11C17 8.24 14.76 6 12 6ZM12 13C11.45 13 11 12.55 11 12C11 11.45 11.45 11 12 11C12.55 11 13 11.45 13 12C13 12.55 12.55 13 12 13Z"
+            fill="currentColor"
+        />
     </svg>
 );
 
@@ -47,9 +49,9 @@ export default function HistoryPage() {
             <Sidebar>
                 <SidebarHeader>
                     <div className="flex items-center gap-3 p-2">
-                        <SmartAceLogo className="h-10 w-10 text-primary" />
+                        <HWNinjaLogo className="h-10 w-10 text-primary" />
                         <h1 className="font-headline text-2xl font-bold text-primary-foreground">
-                        SmartAce
+                        HW Ninja
                         </h1>
                     </div>
                 </SidebarHeader>
