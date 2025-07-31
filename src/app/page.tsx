@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, type FC } from "react";
+import React, { useState, type FC, useRef } from "react";
+import Link from 'next/link';
 import {
   BookOpenCheck,
   FileDown,
@@ -8,12 +9,17 @@ import {
   Wand2,
   BrainCircuit,
   Loader2,
+  Settings,
+  History,
+  Home,
+  Bot,
+  PencilRuler,
+  Camera,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -33,6 +39,20 @@ import { smartSolve, type SmartSolveOutput } from "@/ai/flows/smart-solve";
 import { explainSimply } from "@/ai/flows/explain-simply";
 import { useToast } from "@/hooks/use-toast";
 import SolutionCard from "@/components/solution-card";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarInset,
+  SidebarHeader,
+  SidebarTrigger,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
+import { saveHistory } from "@/lib/history";
+import { SettingsPanel } from "@/components/settings-panel";
 
 const SmartAceLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
@@ -50,22 +70,12 @@ const SmartAceLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 );
 
-const AIAssistantAvatar: FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 256 256"
-    fill="currentColor"
-  >
-    <path d="M232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128ZM128,40a88,88,0,1,0,88,88A88.1,88.1,0,0,0,128,40ZM80,112a16,16,0,1,0-16-16A16,16,0,0,0,80,112Zm80,0a16,16,0,1,0-16-16A16,16,0,0,0,160,112ZM91.4,152a48,48,0,0,0,73.2,0,8,8,0,0,0-11.3-11.3,32,32,0,0,1-50.6,0,8,8,0,0,0-11.3,11.3Z" />
-  </svg>
-);
-
 export default function SmartAcePage() {
   const [gradeLevel, setGradeLevel] = useState("8");
   const [subject, setSubject] = useState("Maths");
   const [difficulty, setDifficulty] = useState("Medium");
   const [question, setQuestion] = useState("");
+  const [language, setLanguage] = useState("");
   const [studentAnswer, setStudentAnswer] = useState("");
   const [testMode, setTestMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,14 +87,27 @@ export default function SmartAcePage() {
   const [aiMessage, setAiMessage] = useState(
     "Hi there! Let's solve some homework. Fill in the details and your question, and I'll get right to it!"
   );
+  const [image, setImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSolve = async () => {
-    if (!question.trim()) {
+    if (!question.trim() && !image) {
       toast({
         title: "Uh oh!",
-        description: "Please enter a question before I can solve it.",
+        description: "Please enter a question or upload an image before I can solve it.",
         variant: "destructive",
       });
       return;
@@ -96,15 +119,23 @@ export default function SmartAcePage() {
     setAiMessage("Let me think... I'm working on the solution now!");
 
     try {
-      const result = await smartSolve({
+      const input = {
         question,
         gradeLevel: parseInt(gradeLevel, 10),
-        subject: subject as "Maths" | "Science" | "English",
+        subject: subject as "Maths" | "Science" | "English" | "Hindi" | "Social Science",
         difficultyLevel: difficulty as "Easy" | "Medium" | "Hard",
         ...(testMode && { studentAnswer }),
-      });
+        ...(image && { photoDataUri: image }),
+        ...(language && { language }),
+      };
+      const result = await smartSolve(input);
       setSolution(result);
       setAiMessage("I've got it! Check out the solution below.");
+      saveHistory({
+        ...input,
+        solution: result,
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
       console.error("Error solving question:", error);
       toast({
@@ -153,202 +184,295 @@ export default function SmartAcePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background font-body text-foreground">
-      <div className="container mx-auto flex max-w-4xl flex-col gap-8 p-4 py-8 sm:p-8">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <SmartAceLogo className="h-10 w-10 text-primary" />
-            <h1 className="font-headline text-3xl font-bold text-primary-foreground">
-              SmartAce
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Label htmlFor="test-mode" className="font-medium">
-              Test Mode
-            </Label>
-            <Switch
-              id="test-mode"
-              checked={testMode}
-              onCheckedChange={setTestMode}
-            />
-          </div>
-        </header>
-
-        <main className="flex flex-col gap-8">
-          <Card className="overflow-hidden border-2 border-primary/20 shadow-lg">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <div>
-                  <Label htmlFor="grade-level" className="font-medium">
-                    Class
-                  </Label>
-                  <Select
-                    value={gradeLevel}
-                    onValueChange={setGradeLevel}
-                    name="grade-level"
-                  >
-                    <SelectTrigger id="grade-level" className="mt-2">
-                      <SelectValue placeholder="Select class" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 7 }, (_, i) => i + 6).map((g) => (
-                        <SelectItem key={g} value={String(g)}>
-                          Class {g}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="subject" className="font-medium">
-                    Subject
-                  </Label>
-                  <Select
-                    value={subject}
-                    onValueChange={setSubject}
-                    name="subject"
-                  >
-                    <SelectTrigger id="subject" className="mt-2">
-                      <SelectValue placeholder="Select subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Maths">Maths</SelectItem>
-                      <SelectItem value="Science">Science</SelectItem>
-                      <SelectItem value="English">English</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="difficulty" className="font-medium">
-                    Difficulty
-                  </Label>
-                  <Select
-                    value={difficulty}
-                    onValueChange={setDifficulty}
-                    name="difficulty"
-                  >
-                    <SelectTrigger id="difficulty" className="mt-2">
-                      <SelectValue placeholder="Select difficulty" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Easy">Easy</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Hard">Hard</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <Tabs defaultValue="type">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="type">Type Question</TabsTrigger>
-                  <TabsTrigger value="upload" disabled>
-                    Upload Image
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="type">
-                  <Card>
-                    <CardContent className="p-4">
-                      <Textarea
-                        placeholder="e.g., What is the powerhouse of the cell?"
-                        className="min-h-[150px] resize-none text-base"
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                      />
-                      {testMode && (
-                        <div className="mt-4">
-                          <Label htmlFor="student-answer" className="font-medium">
-                            Your Answer
-                          </Label>
-                          <Input
-                            id="student-answer"
-                            placeholder="Type your answer here before solving"
-                            className="mt-2"
-                            value={studentAnswer}
-                            onChange={(e) => setStudentAnswer(e.target.value)}
-                          />
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                <TabsContent value="upload">
-                  <Card>
-                    <CardContent className="flex h-[150px] flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 text-center">
-                      <Upload className="h-8 w-8 text-muted-foreground" />
-                      <p className="text-muted-foreground">
-                        Image upload coming soon!
-                      </p>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
+    <SidebarProvider>
+      <div className="min-h-screen w-full bg-background font-body text-foreground">
+        <Sidebar>
+          <SidebarHeader>
+            <div className="flex items-center gap-3 p-2">
+              <SmartAceLogo className="h-10 w-10 text-primary" />
+              <h1 className="font-headline text-2xl font-bold text-primary-foreground">
+                SmartAce
+              </h1>
             </div>
-            <div className="flex items-center gap-4 lg:col-span-2">
-              <AIAssistantAvatar className="h-20 w-20 flex-shrink-0 text-accent" />
-              <div className="relative rounded-lg bg-card p-4 shadow-sm">
-                <p className="text-sm">{aiMessage}</p>
-                <div className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 bg-card"></div>
-              </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive>
+                  <Link href="/">
+                    <Home />
+                    <span>Home</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/history">
+                    <History />
+                    <span>History</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                 <SidebarMenuButton asChild>
+                  <Link href="/test">
+                    <PencilRuler />
+                    <span>Test Yourself</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter>
+            <SettingsPanel />
+          </SidebarFooter>
+        </Sidebar>
+
+        <SidebarInset>
+          <header className="flex items-center justify-between border-b p-4">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+              <h1 className="text-2xl font-bold">Homework Solver</h1>
             </div>
-          </div>
-
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button
-              size="lg"
-              className="bg-gradient-to-br from-primary to-yellow-400 font-bold text-primary-foreground shadow-lg transition-transform hover:scale-105"
-              onClick={handleSolve}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              ) : (
-                <Wand2 className="mr-2 h-5 w-5" />
-              )}
-              Solve Now
-            </Button>
-            <Button
-              size="lg"
-              variant="secondary"
-              className="font-bold shadow-lg transition-transform hover:scale-105"
-              onClick={handleExplain}
-              disabled={!solution || isExplaining}
-            >
-              {isExplaining ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              ) : (
-                <BrainCircuit className="mr-2 h-5 w-5" />
-              )}
-              Explain Simply
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="font-bold shadow-lg transition-transform hover:scale-105"
-              onClick={handlePrint}
-              disabled={!solution}
-            >
-              <FileDown className="mr-2 h-5 w-5" />
-              Save as PDF
-            </Button>
-          </div>
-
-          {solution && (
-             <div id="printable-solution">
-              <SolutionCard
-                solution={solution}
-                simpleExplanation={simpleExplanation}
-                testMode={testMode}
-                isLoadingExplanation={isExplaining}
+            <div className="flex items-center gap-3">
+              <Label htmlFor="test-mode" className="font-medium">
+                Test Mode
+              </Label>
+              <Switch
+                id="test-mode"
+                checked={testMode}
+                onCheckedChange={setTestMode}
               />
             </div>
-          )}
-        </main>
+          </header>
+
+          <main className="flex flex-col gap-8 p-4 sm:p-8">
+            <Card className="overflow-hidden border-2 border-primary/20 shadow-lg">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+                  <div>
+                    <Label htmlFor="grade-level" className="font-medium">
+                      Class
+                    </Label>
+                    <Select
+                      value={gradeLevel}
+                      onValueChange={setGradeLevel}
+                      name="grade-level"
+                    >
+                      <SelectTrigger id="grade-level" className="mt-2">
+                        <SelectValue placeholder="Select class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 7 }, (_, i) => i + 6).map((g) => (
+                          <SelectItem key={g} value={String(g)}>
+                            Class {g}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="subject" className="font-medium">
+                      Subject
+                    </Label>
+                    <Select
+                      value={subject}
+                      onValueChange={setSubject}
+                      name="subject"
+                    >
+                      <SelectTrigger id="subject" className="mt-2">
+                        <SelectValue placeholder="Select subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Maths">Maths</SelectItem>
+                        <SelectItem value="Science">Science</SelectItem>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Hindi">Hindi</SelectItem>
+                        <SelectItem value="Social Science">Social Science</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="difficulty" className="font-medium">
+                      Difficulty
+                    </Label>
+                    <Select
+                      value={difficulty}
+                      onValueChange={setDifficulty}
+                      name="difficulty"
+                    >
+                      <SelectTrigger id="difficulty" className="mt-2">
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Easy">Easy</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Hard">Hard</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                   <div>
+                    <Label htmlFor="language" className="font-medium">
+                      Language
+                    </Label>
+                    <Input id="language" placeholder="e.g., Hindi" className="mt-2" value={language} onChange={(e) => setLanguage(e.target.value)} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+              <div className="lg:col-span-3">
+                <Tabs defaultValue="type">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="type">Type Question</TabsTrigger>
+                    <TabsTrigger value="upload">
+                      <Camera className="mr-2 h-4 w-4" />
+                      Upload Image
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="type">
+                    <Card>
+                      <CardContent className="p-4">
+                        <Textarea
+                          placeholder="e.g., What is the powerhouse of the cell?"
+                          className="min-h-[150px] resize-none text-base"
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
+                        />
+                        {testMode && (
+                          <div className="mt-4">
+                            <Label
+                              htmlFor="student-answer"
+                              className="font-medium"
+                            >
+                              Your Answer
+                            </Label>
+                            <Input
+                              id="student-answer"
+                              placeholder="Type your answer here before solving"
+                              className="mt-2"
+                              value={studentAnswer}
+                              onChange={(e) =>
+                                setStudentAnswer(e.target.value)
+                              }
+                            />
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="upload">
+                    <Card>
+                      <CardContent className="flex h-auto min-h-[150px] flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-4 text-center">
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          className="hidden"
+                        />
+                        {image ? (
+                          <div className="relative">
+                            <img
+                              src={image}
+                              alt="Uploaded homework"
+                              className="max-h-60 w-auto rounded-md"
+                            />
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute right-2 top-2"
+                              onClick={() => {
+                                setImage(null);
+                                if(fileInputRef.current) {
+                                    fileInputRef.current.value = "";
+                                }
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="h-8 w-8 text-muted-foreground" />
+                            <p className="text-muted-foreground">
+                              Click the button to upload an image
+                            </p>
+                            <Button
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              Select Image
+                            </Button>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <div className="flex items-start gap-4 lg:col-span-2">
+                <Bot className="h-20 w-20 flex-shrink-0 text-accent" />
+                <div className="relative rounded-lg bg-card p-4 shadow-sm">
+                  <p className="text-sm">{aiMessage}</p>
+                  <div className="absolute -left-2 top-4 h-4 w-4 -translate-y-1/2 rotate-45 bg-card"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <Button
+                size="lg"
+                className="bg-gradient-to-br from-primary to-blue-400 font-bold text-primary-foreground shadow-lg transition-transform hover:scale-105"
+                onClick={handleSolve}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <Wand2 className="mr-2 h-5 w-5" />
+                )}
+                Solve Now
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="font-bold shadow-lg transition-transform hover:scale-105"
+                onClick={handleExplain}
+                disabled={!solution || isExplaining}
+              >
+                {isExplaining ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <BrainCircuit className="mr-2 h-5 w-5" />
+                )}
+                Explain Simply
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="font-bold shadow-lg transition-transform hover:scale-105"
+                onClick={handlePrint}
+                disabled={!solution}
+              >
+                <FileDown className="mr-2 h-5 w-5" />
+                Save as PDF
+              </Button>
+            </div>
+
+            {solution && (
+              <div id="printable-solution">
+                <SolutionCard
+                  solution={solution}
+                  simpleExplanation={simpleExplanation}
+                  testMode={testMode}
+                  isLoadingExplanation={isExplaining}
+                />
+              </div>
+            )}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
