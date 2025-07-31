@@ -19,45 +19,42 @@ const themes = [
 export const SettingsPanel: React.FC = () => {
     const [mounted, setMounted] = useState(false);
     const { theme, setTheme } = useTheme();
+    const [colorTheme, setColorTheme] = useState(themes[0]);
     
     useEffect(() => {
         setMounted(true);
-        const savedTheme = localStorage.getItem("app-theme");
-        if (savedTheme) {
-            const foundTheme = themes.find(t => t.name === savedTheme);
-            if (foundTheme) {
-                applyTheme(foundTheme);
-            }
+        const savedThemeName = localStorage.getItem("app-theme");
+        if (savedThemeName) {
+            const foundTheme = themes.find(t => t.name === savedThemeName) || themes[0];
+            setColorTheme(foundTheme);
         }
     }, []);
 
-    const applyTheme = (theme: {name: string, bg: string; primary: string}) => {
+    const applyTheme = (themeToApply: {name: string, bg: string; primary: string}) => {
         const root = document.documentElement;
-        if (document.body.classList.contains('dark')) {
-            // In dark mode, we just set the primary, not the background.
-            root.style.setProperty("--primary", theme.primary);
-            localStorage.setItem("app-theme", theme.name);
-            return;
+        setColorTheme(themeToApply);
+        localStorage.setItem("app-theme", themeToApply.name);
+        
+        // Always set the primary color
+        root.style.setProperty("--primary", themeToApply.primary);
+        root.style.setProperty("--sidebar-primary", themeToApply.primary);
+        root.style.setProperty("--sidebar-ring", themeToApply.primary);
+
+
+        if (theme === 'light') {
+           root.style.setProperty("--background", themeToApply.bg);
+        } else {
+            // In dark mode, we don't set a custom background, so we remove it if it was set
+            root.style.removeProperty('--background');
         }
-        root.style.setProperty("--background", theme.bg);
-        root.style.setProperty("--primary", theme.primary);
-        localStorage.setItem("app-theme", theme.name);
     }
   
     // This effect ensures the theme is reapplied when switching between light/dark mode
     useEffect(() => {
         if (mounted) {
-             const savedThemeName = localStorage.getItem("app-theme");
-             const savedTheme = themes.find(t => t.name === savedThemeName);
-             if (theme === 'dark') {
-                // Remove custom background when going to dark mode
-                document.documentElement.style.removeProperty('--background');
-             } else if (savedTheme) {
-                // Re-apply theme when going to light mode
-                applyTheme(savedTheme);
-             }
+            applyTheme(colorTheme);
         }
-    }, [theme, mounted]);
+    }, [theme, mounted, colorTheme]);
 
     if (!mounted) {
       return (
@@ -100,15 +97,15 @@ export const SettingsPanel: React.FC = () => {
                             <Label htmlFor="theme-color">Color</Label>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {themes.map(colorTheme => (
+                            {themes.map(ct => (
                                 <Button 
-                                    key={colorTheme.name} 
+                                    key={ct.name} 
                                     variant="outline" 
                                     size="icon" 
                                     className="h-8 w-8"
-                                    onClick={() => applyTheme(colorTheme)}
+                                    onClick={() => applyTheme(ct)}
                                 >
-                                    <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${colorTheme.primary})`}}></div>
+                                    <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
                                 </Button>
                             ))}
                         </div>
