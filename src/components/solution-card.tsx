@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown } from "lucide-react";
+import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown, Volume2, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 
@@ -21,6 +21,10 @@ interface SolutionCardProps {
   simpleExplanation: string | null;
   testMode: boolean;
   isLoadingExplanation: boolean;
+  isSpeaking: boolean;
+  audioDataUri: string | null;
+  onListenClick: () => void;
+  audioRef: React.MutableRefObject<HTMLAudioElement | null>;
 }
 
 const SolutionCard: React.FC<SolutionCardProps> = ({
@@ -28,6 +32,10 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
   simpleExplanation,
   testMode,
   isLoadingExplanation,
+  isSpeaking,
+  audioDataUri,
+  onListenClick,
+  audioRef,
 }) => {
   const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
 
@@ -95,8 +103,20 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                 </div>
             </>
         )}
+
+        {audioDataUri && (
+          <>
+            <Separator />
+            <div className="flex flex-col items-center gap-4 pt-4">
+                <audio ref={audioRef} controls className="w-full">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+          </>
+        )}
+
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
+      <CardFooter className="flex-wrap justify-end gap-2">
             <p className="text-sm text-muted-foreground mr-auto">Was this helpful?</p>
             <Button 
                 variant={feedback === 'like' ? 'secondary' : 'ghost'} 
@@ -113,6 +133,14 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                 className={feedback === 'dislike' ? 'text-red-500' : ''}
                 >
                 <ThumbsDown className="h-5 w-5"/>
+            </Button>
+            <Button 
+                variant="outline"
+                onClick={onListenClick}
+                disabled={isSpeaking}
+            >
+                {isSpeaking ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Volume2 className="mr-2 h-4 w-4"/>}
+                Listen
             </Button>
       </CardFooter>
     </Card>

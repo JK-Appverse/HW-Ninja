@@ -14,6 +14,7 @@ import {
   PencilRuler,
   Camera,
   Image,
+  Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { smartSolve, type SmartSolveOutput } from "@/ai/flows/smart-solve";
 import { explainSimply } from "@/ai/flows/explain-simply";
+import { textToSpeech } from "@/ai/flows/text-to-speech-flow";
 import { useToast } from "@/hooks/use-toast";
 import SolutionCard from "@/components/solution-card";
 import {
@@ -124,15 +126,18 @@ export default function HWNinjaPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isExplaining, setIsExplaining] = useState(false);
   const [isShowingAd, setIsShowingAd] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [solution, setSolution] = useState<SmartSolveOutput | null>(null);
   const [simpleExplanation, setSimpleExplanation] = useState<string | null>(
     null
   );
+  const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
   const [aiMessage, setAiMessage] = useState(
     "Hi there! Let's solve some homework. Fill in the details and your question, and I'll get right to it!"
   );
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { toast } = useToast();
 
@@ -143,6 +148,14 @@ export default function HWNinjaPage() {
       setAiMessage(`Hi ${storedName}! How can I help you today?`);
     }
   }, []);
+  
+  useEffect(() => {
+    if (audioRef.current && audioDataUri) {
+      audioRef.current.src = audioDataUri;
+      audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
+    }
+  }, [audioDataUri]);
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -168,6 +181,7 @@ export default function HWNinjaPage() {
     setIsLoading(true);
     setSolution(null);
     setSimpleExplanation(null);
+    setAudioDataUri(null);
     setAiMessage("Let me think... I'm working on the solution now!");
 
     // विज्ञापन दिखाने का लॉजिक
@@ -273,6 +287,35 @@ export default function HWNinjaPage() {
     } finally {
         setIsShowingAd(false);
         setAiMessage("How can I help you next?");
+    }
+  };
+
+  const handleListen = async () => {
+    if (!solution) return;
+
+    setIsSpeaking(true);
+    setAudioDataUri(null);
+    setAiMessage("Getting the audio ready...");
+
+    try {
+        const textToSpeak = `
+            Solution: ${solution.solution}.
+            Explanation: ${solution.explanation}.
+            ${simpleExplanation ? `Simplified Explanation: ${simpleExplanation}` : ''}
+        `;
+        const result = await textToSpeech({ text: textToSpeak });
+        setAudioDataUri(result.audioDataUri);
+        setAiMessage("Now playing the solution for you!");
+    } catch (error) {
+        console.error("Error generating speech:", error);
+        toast({
+            title: "Audio Error",
+            description: "I couldn't generate the audio. Please try again.",
+            variant: "destructive",
+        });
+        setAiMessage("Sorry, I'm having trouble speaking right now.");
+    } finally {
+        setIsSpeaking(false);
     }
   };
 
@@ -549,6 +592,20 @@ export default function HWNinjaPage() {
                 )}
                 Explain Simply
               </Button>
+               <Button
+                size="lg"
+                variant="secondary"
+                className="font-bold shadow-lg transition-transform hover:scale-105"
+                onClick={handleListen}
+                disabled={!solution || isSpeaking || isShowingAd}
+              >
+                {isSpeaking ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <Volume2 className="mr-2 h-5 w-5" />
+                )}
+                Listen
+              </Button>
               <Button
                 size="lg"
                 variant="outline"
@@ -572,6 +629,10 @@ export default function HWNinjaPage() {
                   simpleExplanation={simpleExplanation}
                   testMode={testMode}
                   isLoadingExplanation={isExplaining}
+                  audioDataUri={audioDataUri}
+                  isSpeaking={isSpeaking}
+                  onListenClick={handleListen}
+                  audioRef={audioRef}
                 />
               </div>
             )}
