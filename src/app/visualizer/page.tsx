@@ -23,11 +23,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { generateImage } from '@/ai/flows/generate-image-flow';
-import { Home, History, PencilRuler, Image as ImageIcon, Loader2, Wand2, ThumbsUp, ThumbsDown, Download } from 'lucide-react';
+import { Home, History, PencilRuler, Image as ImageIcon, Loader2, Wand2, ThumbsUp, ThumbsDown, Download, AlertCircle } from 'lucide-react';
 import { SettingsPanel } from '@/components/settings-panel';
 import { useToast } from '@/hooks/use-toast';
 
@@ -145,7 +146,7 @@ export default function VisualizerPage() {
                     Enter a topic, and our AI will generate an image to help you understand it.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="concept-prompt" className="text-base">What do you want to learn about?</Label>
                     <Input
@@ -156,6 +157,13 @@ export default function VisualizerPage() {
                       disabled={isLoading}
                     />
                   </div>
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Disclaimer</AlertTitle>
+                    <AlertDescription>
+                     HW Ninja can make mistakes. Please double-check the information.
+                    </AlertDescription>
+                  </Alert>
                 </CardContent>
                 <CardFooter>
                   <Button onClick={handleGenerateImage} disabled={isLoading} className="w-full bg-gradient-to-r from-primary to-purple-500 text-white">
