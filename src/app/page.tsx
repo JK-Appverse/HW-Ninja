@@ -13,8 +13,6 @@ import {
   Bot,
   PencilRuler,
   Camera,
-  Video,
-  VideoOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,7 +51,6 @@ import {
 } from "@/components/ui/sidebar";
 import { saveHistory } from "@/lib/history";
 import { SettingsPanel } from "@/components/settings-panel";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
@@ -93,41 +90,8 @@ export default function HWNinjaPage() {
   );
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [cameraMode, setCameraMode] = useState(false);
-  const [hasCameraPermission, setHasCameraPermission] = useState(true);
 
   const { toast } = useToast();
-
-   useEffect(() => {
-    if (cameraMode) {
-      const getCameraPermission = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-          setHasCameraPermission(true);
-        } catch (error) {
-          console.error("Error accessing camera:", error);
-          setHasCameraPermission(false);
-          setCameraMode(false);
-          toast({
-            variant: "destructive",
-            title: "Camera Access Denied",
-            description: "Please enable camera permissions in your browser settings to use the camera feature.",
-          });
-        }
-      };
-      getCameraPermission();
-    } else {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
-        videoRef.current.srcObject = null;
-      }
-    }
-  }, [cameraMode, toast]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -135,24 +99,8 @@ export default function HWNinjaPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
-        setCameraMode(false); // Turn off camera if an image is uploaded
       };
       reader.readAsDataURL(file);
-    }
-  };
-
-  const handleCapture = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const dataUri = canvas.toDataURL("image/png");
-        setImage(dataUri);
-        setCameraMode(false); // Turn off camera after capture
-      }
     }
   };
 
@@ -287,20 +235,6 @@ export default function HWNinjaPage() {
               <SidebarTrigger />
               <h1 className="text-2xl font-bold">Homework Solver</h1>
             </div>
-            <Button
-                variant={cameraMode ? "secondary" : "outline"}
-                onClick={() => {
-                  setCameraMode(!cameraMode);
-                  setImage(null);
-                }}
-              >
-                {cameraMode ? (
-                  <VideoOff className="mr-2 h-4 w-4" />
-                ) : (
-                  <Video className="mr-2 h-4 w-4" />
-                )}
-                {cameraMode ? "Close Camera" : "Live Camera"}
-            </Button>
           </header>
 
           <main className="flex flex-col gap-8 p-4 sm:p-8">
@@ -438,7 +372,6 @@ export default function HWNinjaPage() {
                           onChange={handleFileChange}
                           accept="image/*"
                           className="hidden"
-                          onClick={() => setCameraMode(false)}
                         />
                         {image ? (
                           <div className="relative">
@@ -461,21 +394,9 @@ export default function HWNinjaPage() {
                               Remove
                             </Button>
                           </div>
-                        ) : cameraMode ? (
-                           <div className="w-full flex flex-col items-center gap-2">
-                               <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted playsInline />
-                               {!hasCameraPermission && <Alert variant="destructive" className="mt-2">
-                                  <AlertTitle>Camera Access Required</AlertTitle>
-                                  <AlertDescription>Please allow camera access to use this feature.</AlertDescription>
-                                </Alert>}
-                                <Button onClick={handleCapture} disabled={!hasCameraPermission} className="mt-2">
-                                  <Camera className="mr-2 h-4 w-4"/>
-                                  Capture Image
-                                </Button>
-                           </div>
                         ) : (
                           <>
-                            <Upload className="h-8 w-8 text-muted-foreground" />
+                            <Camera className="h-8 w-8 text-muted-foreground" />
                             <p className="text-muted-foreground">
                               Click the button to upload an image
                             </p>

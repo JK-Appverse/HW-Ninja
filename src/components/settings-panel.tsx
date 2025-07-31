@@ -35,26 +35,24 @@ export const SettingsPanel: React.FC = () => {
         setColorTheme(themeToApply);
         localStorage.setItem("app-theme", themeToApply.name);
         
-        // Always set the primary color
         root.style.setProperty("--primary", themeToApply.primary);
         root.style.setProperty("--sidebar-primary", themeToApply.primary);
         root.style.setProperty("--sidebar-ring", themeToApply.primary);
-
+        root.style.setProperty("--ring", themeToApply.primary);
 
         if (theme === 'light') {
            root.style.setProperty("--background", themeToApply.bg);
         } else {
-            // In dark mode, we don't set a custom background, so we remove it if it was set
             root.style.removeProperty('--background');
         }
     }
   
-    // This effect ensures the theme is reapplied when switching between light/dark mode
     useEffect(() => {
         if (mounted) {
             applyTheme(colorTheme);
         }
-    }, [theme, mounted, colorTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [theme, mounted]);
 
     if (!mounted) {
       return (
@@ -102,7 +100,7 @@ export const SettingsPanel: React.FC = () => {
                                     key={ct.name} 
                                     variant="outline" 
                                     size="icon" 
-                                    className="h-8 w-8"
+                                    className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
                                     onClick={() => applyTheme(ct)}
                                 >
                                     <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
