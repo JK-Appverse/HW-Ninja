@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/sidebar";
 import { saveHistory } from "@/lib/history";
 import { SettingsPanel } from "@/components/settings-panel";
+import AdBanner from "@/components/ad-banner";
 
 const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
@@ -258,7 +259,7 @@ export default function HWNinjaPage() {
                     </Label>
                     <Select
                       value={gradeLevel}
-                      onValueChange={setGradeLevel}
+                      onValuechange={setGradeLevel}
                       name="grade-level"
                     >
                       <SelectTrigger id="grade-level" className="mt-2">
@@ -482,6 +483,7 @@ export default function HWNinjaPage() {
                 />
               </div>
             )}
+            <AdBanner />
           </main>
         </SidebarInset>
       </div>
