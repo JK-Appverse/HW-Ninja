@@ -36,7 +36,16 @@ const generateImageFlow = ai.defineFlow(
   async (input) => {
     const { media } = await ai.generate({
         model: 'googleai/gemini-2.0-flash-preview-image-generation',
-        prompt: `Create an educational, visually appealing, and simple diagram or illustration for a student on the following topic: ${input.prompt}. The image should be clear, concise, and easy to understand. Avoid complex text within the image.`,
+        prompt: `You are an expert at creating educational diagrams for students. Your task is to generate a clear, simple, and scientifically accurate diagram for the following topic: "${input.prompt}".
+
+Instructions for the diagram:
+1. **Clarity and Simplicity:** The diagram must be easy for a student to understand. Avoid clutter.
+2. **Accurate Labeling:** All key parts must be clearly and accurately labeled. Double-check the spellings and placement of labels.
+3. **Pointers:** Use clean lines or arrows to point from the label to the correct part of the diagram.
+4. **Readability:** Use bold, legible text for all labels.
+5. **Educational Focus:** The diagram should be visually appealing and strictly educational. It must be accurate.
+
+Generate the diagram for the topic: "${input.prompt}"`,
         config: {
             responseModalities: ['TEXT', 'IMAGE'],
         },
