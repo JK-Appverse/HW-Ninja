@@ -77,69 +77,46 @@ const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
 
 
 // =======================================================================
-// || AdMob विज्ञापन के लिए ढाँचा (AdMob Ads Structure)                  ||
+// || AdSense विज्ञापन के लिए ढाँचा (AdSense Ads Structure)             ||
 // =======================================================================
 // **महत्वपूर्ण:** यह कोड सिर्फ़ एक ढाँचा है। असली विज्ञापन दिखाने के लिए,
-// आपको इस प्रोजेक्ट को Capacitor जैसे टूल से एक नेटिव ऐप में बदलना होगा
-// और फिर Capacitor AdMob प्लगइन का इस्तेमाल करना होगा।
-
-// **स्टेप 1: AdMob प्लगइन को कॉल करना**
-// नीचे दिए गए फ़ंक्शंस AdMob प्लगइन से बात करने की कोशिश करेंगे।
-// जब तक आप प्लगइन इंस्टॉल नहीं करते, ये कंसोल में मैसेज दिखाएंगे।
-const showAd = async (options: { adId: string; isTesting: boolean; rewarded?: boolean }) => {
-  // `window.Capacitor.Plugins.AdMob` यह Capacitor AdMob प्लगइन द्वारा उपलब्ध कराया जाएगा।
-  const AdMob = window.Capacitor?.Plugins?.AdMob;
-
-  if (!AdMob) {
-    console.log(`AdMob प्लगइन नहीं मिला। विज्ञापन (ID: ${options.adId}) सिर्फ़ एक सैंपल है।`);
-    return new Promise(resolve => setTimeout(() => resolve({ rewardAmount: options.rewarded ? 1 : 0 }), 1000));
-  }
-
-  try {
-    await AdMob.prepareInterstitial(options);
-    const result = await AdMob.showInterstitial();
-    return result;
-  } catch (e) {
-    console.error("AdMob विज्ञापन दिखाने में त्रुटि:", e);
-    throw e;
-  }
-};
-
+// आपको Google AdSense से मिले विज्ञापन कोड को यहाँ डालना होगा।
 
 // Interstitial विज्ञापन दिखाने के लिए फ़ंक्शन
 const showInterstitialAd = (): Promise<void> => {
   console.log("Interstitial Ad: दिखाने का प्रयास किया जा रहा है...");
-  const options = {
-    // **स्टेप 2: अपनी Ad Unit ID यहाँ डालें**
-    adId: "ca-app-pub-3940256099942544/1033173712", // यह गूगल की टेस्ट ID है। अपनी असली ID यहाँ डालें।
-    isTesting: true, // ऐप पब्लिश करते समय इसे `false` कर दें।
-  };
-  return showAd(options).then(() => {});
+  // =========================================================
+  // || यहाँ पर आपको AdSense का Interstitial Ad कोड डालना है। ||
+  // =========================================================
+  // अभी के लिए, यह सिर्फ़ 1 सेकंड का इंतज़ार करेगा।
+  return new Promise(resolve => setTimeout(() => {
+    console.log("Interstitial Ad: पूरा हुआ (सैंपल)।");
+    resolve();
+  }, 1000));
 };
 
 
 // इनाम वाले (Rewarded) विज्ञापन के लिए फ़ंक्शन
 const showRewardedAd = (): Promise<boolean> => {
   console.log("Rewarded Ad: दिखाने का प्रयास किया जा रहा है...");
-  const options = {
-    // **स्टेप 2: अपनी Ad Unit ID यहाँ डालें**
-    adId: "ca-app-pub-3940256099942544/5224354917", // यह गूगल की टेस्ट ID है। अपनी असली ID यहाँ डालें।
-    isTesting: true, // ऐप पब्लिश करते समय इसे `false` कर दें।
-    rewarded: true,
-  };
-  
-  return showAd(options).then(result => {
-    if (result && result.rewardAmount > 0) {
-      console.log("Rewarded Ad: इनाम दिया गया।");
-      return true;
+  // =====================================================
+  // || यहाँ पर आपको AdSense का Rewarded Ad कोड डालना है। ||
+  // =====================================================
+  // AdSense का कोड आपको यह बताएगा कि यूज़र ने विज्ञापन पूरा देखा है या नहीं।
+  // अभी के लिए, हम मान रहे हैं कि यूज़र ने विज्ञापन देख लिया है।
+  const adWatched = true; 
+  return new Promise(resolve => setTimeout(() => {
+    if(adWatched){
+        console.log("Rewarded Ad: इनाम दिया गया (सैंपल)।");
+        resolve(true);
     } else {
-      console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया।");
-      return false;
+        console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया (सैंपल)।");
+        resolve(false);
     }
-  });
+  }, 1500));
 };
 // =======================================================================
-// || AdMob ढाँचे का अंत                                                ||
+// || AdSense ढाँचे का अंत                                             ||
 // =======================================================================
 
 
@@ -701,14 +678,4 @@ export default function HWNinjaPage() {
       </div>
     </SidebarProvider>
   );
-}
-
-declare global {
-    interface Window {
-        Capacitor?: {
-            Plugins?: {
-                AdMob?: any;
-            };
-        };
-    }
 }
