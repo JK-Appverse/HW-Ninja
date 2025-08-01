@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -7,31 +8,25 @@ const AdBanner = () => {
     <div className="flex items-center justify-center min-h-[100px] w-full bg-muted/50 rounded-lg border border-dashed my-8 p-4 text-center">
       {/* 
         ======================================================================
-        === अपनी गूगल एडसेंस की स्क्रिप्ट यहाँ पेस्ट करें ===
+        === AdMob बैनर विज्ञापन के लिए                                      ===
         ======================================================================
         
-        जब आपका गूगल एडसेंस अकाउंट अप्रूव हो जाए, तो वे आपको एक कोड देंगे।
-        उस पूरे कोड को नीचे दिए गए उदाहरण की जगह पेस्ट कर दें।
+        जब आप इस ऐप को Capacitor के साथ एक नेटिव ऐप में बदल देंगे, तो आपको
+        AdMob प्लगइन का उपयोग करके यहाँ एक बैनर विज्ञापन दिखाना होगा।
         
-        उदाहरण के लिए, आपका कोड कुछ ऐसा दिख सकता है:
+        यह `page.tsx` में दिए गए Interstitial/Rewarded विज्ञापनों से अलग है।
+        बैनर विज्ञापन आमतौर पर पेज के एक हिस्से में हमेशा दिखाई देते हैं।
         
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-your-client-id"
-             crossOrigin="anonymous"></script>
-        <ins class="adsbygoogle"
-             style={{display: 'block'}}
-             data-ad-client="ca-pub-your-client-id"
-             data-ad-slot="your-ad-slot-id"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        Capacitor AdMob प्लगइन का उपयोग करके आपको यहाँ विज्ञापन लोड और शो
+        करने का कोड लिखना होगा।
         
         अभी के लिए, नीचे सिर्फ एक प्लेसहोल्डर टेक्स्ट है।
       */}
-      <p className="text-muted-foreground text-sm">आपका विज्ञापन यहाँ दिखेगा</p>
+      <p className="text-muted-foreground text-sm">आपका AdMob बैनर विज्ञापन यहाँ दिखेगा</p>
     </div>
   );
 };
 
 export default AdBanner;
+
+    
