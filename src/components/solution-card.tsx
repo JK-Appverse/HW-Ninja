@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -12,9 +13,10 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown, Volume2, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown, Volume2, Loader2, Copy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface SolutionCardProps {
   solution: SmartSolveOutput;
@@ -38,6 +40,15 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
   audioRef,
 }) => {
   const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
+  const { toast } = useToast();
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: "The text has been copied to your clipboard.",
+    });
+  };
 
   const CorrectnessBadge = () => {
     if (typeof solution.isCorrect !== "boolean") return null;
@@ -66,10 +77,16 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="mb-2 text-lg font-semibold">Answer:</h3>
-          <p className="text-foreground/90 whitespace-pre-wrap rounded-md bg-muted p-4">
-            {solution.solution}
-          </p>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold">Answer:</h3>
+              <Button variant="ghost" size="icon" onClick={() => handleCopy(solution.solution)}>
+                <Copy className="h-4 w-4" />
+                <span className="sr-only">Copy Answer</span>
+              </Button>
+            </div>
+            <p className="text-foreground/90 whitespace-pre-wrap rounded-md bg-muted p-4">
+                {solution.solution}
+            </p>
         </div>
 
         <Separator />
@@ -85,10 +102,18 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
             <>
                 <Separator />
                 <div>
-                    <h3 className="mb-2 flex items-center text-lg font-semibold">
-                        <Lightbulb className="mr-2 h-5 w-5 text-yellow-400" />
-                        Simplified Explanation:
-                    </h3>
+                     <div className="flex items-center justify-between mb-2">
+                        <h3 className="flex items-center text-lg font-semibold">
+                            <Lightbulb className="mr-2 h-5 w-5 text-yellow-400" />
+                            Simplified Explanation:
+                        </h3>
+                         {!isLoadingExplanation && simpleExplanation && (
+                            <Button variant="ghost" size="icon" onClick={() => handleCopy(simpleExplanation)}>
+                                <Copy className="h-4 w-4" />
+                                <span className="sr-only">Copy Simplified Explanation</span>
+                            </Button>
+                        )}
+                    </div>
                     {isLoadingExplanation ? (
                         <div className="space-y-2 rounded-md bg-muted p-4">
                             <Skeleton className="h-4 w-full" />
