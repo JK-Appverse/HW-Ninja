@@ -170,12 +170,42 @@ export default function HWNinjaPage() {
 
   const { toast } = useToast();
 
+  const handleDailyNotification = () => {
+    const notificationsEnabled = localStorage.getItem("notifications-enabled") === "true";
+    if (notificationsEnabled && "Notification" in window && Notification.permission === "granted") {
+        const lastVisit = localStorage.getItem("last-app-visit");
+        const today = new Date().toDateString();
+
+        if (lastVisit !== today) {
+            // Schedule notification for a specific time, e.g., 9 AM
+            const now = new Date();
+            const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
+            let timeout = notificationTime.getTime() - now.getTime();
+            if(timeout < 0) { // if 9am is already past, schedule for tomorrow
+                notificationTime.setDate(notificationTime.getDate() + 1);
+                timeout = notificationTime.getTime() - now.getTime();
+            }
+            
+            setTimeout(() => {
+                 new Notification("HW Ninja", {
+                    body: "Your test is waiting for you! 🧠",
+                    icon: "/icons/icon-192x192.png"
+                });
+            }, timeout);
+        }
+    }
+    // Update last visit date
+    localStorage.setItem("last-app-visit", new Date().toDateString());
+  };
+
+
   useEffect(() => {
     const storedName = localStorage.getItem("user-name");
     if (storedName) {
       setUserName(storedName);
       setAiMessage(`Hi ${storedName}! How can I help you today?`);
     }
+    handleDailyNotification();
   }, []);
   
   useEffect(() => {
@@ -682,5 +712,3 @@ declare global {
         };
     }
 }
-
-    

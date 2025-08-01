@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Settings, Moon, Sun, Save } from "lucide-react";
+import { Settings, Moon, Sun, Save, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "./ui/switch";
+import { Separator } from "./ui/separator";
 
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
@@ -26,6 +28,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
     const { theme, setTheme } = useTheme();
     const [colorTheme, setColorTheme] = useState(themes[0]);
     const [userName, setUserName] = useState('');
+    const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const { toast } = useToast();
     
     useEffect(() => {
@@ -38,6 +41,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         const savedUserName = localStorage.getItem("user-name");
         if (savedUserName) {
             setUserName(savedUserName);
+        }
+
+        const notifStatus = localStorage.getItem("notifications-enabled");
+        if (notifStatus === "true" && "Notification" in window && Notification.permission === "granted") {
+            setNotificationsEnabled(true);
+        } else {
+            setNotificationsEnabled(false);
+            localStorage.setItem("notifications-enabled", "false");
         }
     }, []);
 
@@ -66,6 +77,35 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
             title: "Success!",
             description: "Your name has been saved.",
         });
+    }
+
+    const handleNotificationToggle = async (enabled: boolean) => {
+        if (enabled) {
+            if (!("Notification" in window)) {
+                toast({ title: "Error", description: "This browser does not support desktop notification.", variant: "destructive" });
+                return;
+            }
+            if (Notification.permission === "granted") {
+                setNotificationsEnabled(true);
+                localStorage.setItem("notifications-enabled", "true");
+                toast({ title: "Success!", description: "Notifications have been enabled." });
+            } else if (Notification.permission !== "denied") {
+                const permission = await Notification.requestPermission();
+                if (permission === "granted") {
+                    setNotificationsEnabled(true);
+                    localStorage.setItem("notifications-enabled", "true");
+                    toast({ title: "Success!", description: "Notifications have been enabled." });
+                } else {
+                    toast({ title: "Info", description: "You have blocked notifications.", variant: "destructive" });
+                }
+            } else {
+                 toast({ title: "Notifications Blocked", description: "You need to enable notifications in your browser settings.", variant: "destructive" });
+            }
+        } else {
+            setNotificationsEnabled(false);
+            localStorage.setItem("notifications-enabled", "false");
+            toast({ title: "Success!", description: "Notifications have been disabled." });
+        }
     }
   
     useEffect(() => {
@@ -129,6 +169,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                             </div>
                         </div>
                     </div>
+
+                    <Separator />
+                    
                      <div className="space-y-2">
                         <h4 className="font-medium leading-none">Profile</h4>
                         <p className="text-sm text-muted-foreground">
@@ -141,6 +184,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                             <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Your name" />
                             <Button size="icon" onClick={handleSaveName}><Save className="h-4 w-4" /></Button>
                         </div>
+                    </div>
+
+                    <Separator />
+
+                     <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Notifications</h4>
+                        <p className="text-sm text-muted-foreground">
+                           Get daily reminders to practice.
+                        </p>
+                    </div>
+                     <div className="flex items-center justify-between">
+                        <Label htmlFor="notifications" className="flex items-center gap-2">
+                            <Bell className="h-4 w-4"/>
+                            Daily Reminders
+                        </Label>
+                        <Switch
+                            id="notifications"
+                            checked={notificationsEnabled}
+                            onCheckedChange={handleNotificationToggle}
+                        />
                     </div>
                 </div>
             </PopoverContent>
