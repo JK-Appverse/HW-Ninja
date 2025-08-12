@@ -24,7 +24,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" // <-- अपनी पब्लिशर आईडी यहाँ बदलें
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7690223509584791"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
