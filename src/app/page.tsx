@@ -75,47 +75,60 @@ const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
+const isNativeApp = () => {
+    return typeof window !== "undefined" && (window as any).Capacitor?.isNativePlatform();
+}
+
 // =======================================================================
-// || AdSense विज्ञापन के लिए ढाँचा (AdSense Ads Structure)             ||
+// || विज्ञापन के लिए ढाँचा (Ads Structure for Web and App)             ||
 // =======================================================================
-// **महत्वपूर्ण:** यह कोड सिर्फ़ एक ढाँचा है। असली विज्ञापन दिखाने के लिए,
-// आपको Google AdSense से मिले विज्ञापन कोड को यहाँ डालना होगा।
 
 // Interstitial विज्ञापन दिखाने के लिए फ़ंक्शन
 const showInterstitialAd = (): Promise<void> => {
   console.log("Interstitial Ad: दिखाने का प्रयास किया जा रहा है...");
-  // =========================================================
-  // || यहाँ पर आपको AdSense का Interstitial Ad कोड डालना है। ||
-  // =========================================================
-  // अभी के लिए, यह सिर्फ़ 1 सेकंड का इंतज़ार करेगा।
-  return new Promise(resolve => setTimeout(() => {
-    console.log("Interstitial Ad: पूरा हुआ (सैंपल)।");
-    resolve();
-  }, 1000));
+  if (isNativeApp()) {
+    // =======================================================
+    // || यहाँ पर आपको AdMob का Interstitial Ad कोड डालना है। ||
+    // =======================================================
+    console.log("Running in Native App. AdMob Interstitial Ad should be shown here.");
+    return Promise.resolve();
+  } else {
+    // AdSense Auto Ads यह अपने आप संभाल लेगा। वेबसाइट के लिए यह एक सैंपल है।
+    console.log("Running in Web Browser. AdSense will handle ads automatically.");
+    return new Promise(resolve => setTimeout(() => {
+      console.log("Interstitial Ad simulation complete for web.");
+      resolve();
+    }, 1000));
+  }
 };
 
 
 // इनाम वाले (Rewarded) विज्ञापन के लिए फ़ंक्शन
 const showRewardedAd = (): Promise<boolean> => {
   console.log("Rewarded Ad: दिखाने का प्रयास किया जा रहा है...");
-  // =====================================================
-  // || यहाँ पर आपको AdSense का Rewarded Ad कोड डालना है। ||
-  // =====================================================
-  // AdSense का कोड आपको यह बताएगा कि यूज़र ने विज्ञापन पूरा देखा है या नहीं।
-  // अभी के लिए, हम मान रहे हैं कि यूज़र ने विज्ञापन देख लिया है।
-  const adWatched = true; 
-  return new Promise(resolve => setTimeout(() => {
-    if(adWatched){
-        console.log("Rewarded Ad: इनाम दिया गया (सैंपल)।");
-        resolve(true);
-    } else {
-        console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया (सैंपल)।");
-        resolve(false);
-    }
-  }, 1500));
+   if (isNativeApp()) {
+    // ===================================================
+    // || यहाँ पर आपको AdMob का Rewarded Ad कोड डालना है। ||
+    // ===================================================
+    console.log("Running in Native App. AdMob Rewarded Ad should be shown here.");
+    // यह सैंपल मान रहा है कि विज्ञापन देख लिया गया है।
+    return Promise.resolve(true);
+  } else {
+    // AdSense का ऑटो विज्ञापन इसे हैंडल करेगा। यह वेब के लिए एक सैंपल है।
+    const adWatched = true; 
+    return new Promise(resolve => setTimeout(() => {
+      if(adWatched){
+          console.log("Rewarded Ad: इनाम दिया गया (वेब सैंपल)।");
+          resolve(true);
+      } else {
+          console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया (वेब सैंपल)।");
+          resolve(false);
+      }
+    }, 1500));
+  }
 };
 // =======================================================================
-// || AdSense ढाँचे का अंत                                             ||
+// || विज्ञापन ढाँचे का अंत                                             ||
 // =======================================================================
 
 
