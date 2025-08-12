@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hwninja.vercel.app/sitemap.xml

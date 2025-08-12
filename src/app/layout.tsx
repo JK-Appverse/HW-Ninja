@@ -5,8 +5,9 @@ import { Providers } from './providers';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
-  title: 'HW Ninja',
-  description: 'Your Smart AI Homework Solver',
+  title: 'HW Ninja - AI Homework Solver & Tutor',
+  description: 'Your Smart AI Homework Solver for students. Get instant solutions and explanations for Maths, Science, English, Hindi, and Social Science. Prepare for tests and visualize concepts with AI.',
+  keywords: "homework solver, AI homework helper, AI tutor, question answer app, NCERT solutions, CBSE homework, online tutor, math solver, science questions, homework help",
   manifest: '/manifest.json',
 };
 

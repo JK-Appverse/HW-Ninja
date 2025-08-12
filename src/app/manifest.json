@@ -1,7 +1,7 @@
 {
-  "name": "HW Ninja",
+  "name": "HW Ninja - AI Homework Solver",
   "short_name": "HW Ninja",
-  "description": "Your Smart AI Homework Solver",
+  "description": "Your Smart AI Homework Solver for students. Get instant solutions and explanations for Maths, Science, English, Hindi, and Social Science.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
