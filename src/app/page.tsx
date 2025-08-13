@@ -57,41 +57,37 @@ import AdBanner from "@/components/ad-banner";
 import { useLanguage } from "@/contexts/language-context";
 
 const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
-    <svg
-        {...props}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <path
-            d="M12 2L3 5V11C3 16.52 7.03 21.74 12 23C16.97 21.74 21 16.52 21 11V5L12 2Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <path
-            d="M12 23C12 23 15 20 15 16V11H9V16C9 20 12 23 12 23Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <path
-            d="M11 14L9 12"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-         <path
-            d="M13 14L15 12"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-    </svg>
+  <svg
+      {...props}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+  >
+      <defs>
+          <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style={{stopColor: '#4776e6'}} />
+              <stop offset="29%" style={{stopColor: '#8e54e9'}} />
+              <stop offset="67%" style={{stopColor: '#ff2195'}} />
+              <stop offset="100%" style={{stopColor: '#f86343'}} />
+          </linearGradient>
+      </defs>
+      <path
+          d="M50 10C35.5 10 23.5 19 23.5 35.5V50H35.5V35.5C35.5 27.5 42 22 50 22C58 22 64.5 27.5 64.5 35.5V50H76.5V35.5C76.5 19 64.5 10 50 10Z"
+          fill="url(#logo-gradient)"
+      />
+      <path
+          d="M30 65L50 85L70 65L50 45L30 65Z"
+          fill="url(#logo-gradient)"
+      />
+      <path
+          d="M42 58L50 66L58 58L50 50L42 58Z"
+          fill="url(#logo-gradient)"
+      />
+      <path
+          d="M50 85L40 90L50 95L60 90L50 85Z"
+          fill="url(#logo-gradient)"
+      />
+  </svg>
 );
 
 
@@ -395,7 +391,7 @@ export default function HWNinjaPage() {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-3 p-2">
-              <HWNinjaLogo className="h-10 w-10 text-primary" />
+              <HWNinjaLogo className="h-10 w-10" />
               <h1 className="font-headline text-2xl font-bold animated-title">
                 HW Ninja
               </h1>
