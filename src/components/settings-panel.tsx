@@ -142,8 +142,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                     <span>{t.settings.title}</span>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80 p-0">
-                <ScrollArea className="h-[500px] p-4">
+            <PopoverContent className="w-80 p-0" side="top" align="start">
+                <ScrollArea className="h-[400px] w-full p-4">
                     <div className="grid gap-6">
                         <div className="space-y-2">
                             <h4 className="font-medium leading-none">{t.settings.appearance_title}</h4>
@@ -238,5 +238,3 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         </Popover>
     )
 }
-
-    
