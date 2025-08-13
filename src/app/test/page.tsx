@@ -94,12 +94,13 @@ export default function TestPage() {
     setTestData(null);
     setShowResult(false);
     try {
+      const langParam = language === 'English' ? undefined : language;
       const result = await generateTest({
         gradeLevel: parseInt(gradeLevel, 10),
         subject: subject as "Maths" | "Science" | "English" | "Hindi" | "Social Science",
         difficultyLevel: difficulty as "Easy" | "Medium" | "Hard",
         numQuestions,
-        language,
+        language: langParam,
       });
       setTestData(result);
       setAnswers(new Array(result.questions.length).fill(""));
@@ -235,17 +236,17 @@ export default function TestPage() {
               <SelectContent>
                   <SelectItem value="English">English</SelectItem>
                   <SelectItem value="Hindi">Hindi</SelectItem>
-                  <SelectItem value="Bengali">Bengali</SelectItem>
-                  <SelectItem value="Marathi">Marathi</SelectItem>
-                  <SelectItem value="Telugu">Telugu</SelectItem>
-                  <SelectItem value="Tamil">Tamil</SelectItem>
-                  <SelectItem value="Gujarati">Gujarati</SelectItem>
-                  <SelectItem value="Urdu">Urdu</SelectItem>
-                  <SelectItem value="Kannada">Kannada</SelectItem>
-                  <SelectItem value="Odia">Odia</SelectItem>
-                  <SelectItem value="Malayalam">Malayalam</SelectItem>
-                  <SelectItem value="Punjabi">Punjabi</SelectItem>
                   <SelectItem value="Assamese">Assamese</SelectItem>
+                  <SelectItem value="Bengali">Bengali</SelectItem>
+                  <SelectItem value="Gujarati">Gujarati</SelectItem>
+                  <SelectItem value="Kannada">Kannada</SelectItem>
+                  <SelectItem value="Malayalam">Malayalam</SelectItem>
+                  <SelectItem value="Marathi">Marathi</SelectItem>
+                  <SelectItem value="Odia">Odia</SelectItem>
+                  <SelectItem value="Punjabi">Punjabi</SelectItem>
+                  <SelectItem value="Tamil">Tamil</SelectItem>
+                  <SelectItem value="Telugu">Telugu</SelectItem>
+                  <SelectItem value="Urdu">Urdu</SelectItem>
               </SelectContent>
             </Select>
           </div>
