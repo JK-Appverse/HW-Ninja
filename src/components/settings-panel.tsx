@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Switch } from "./ui/switch";
 import { Separator } from "./ui/separator";
 import { useLanguage, type Locale } from "@/contexts/language-context";
+import { ScrollArea } from "./ui/scroll-area";
 
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
@@ -134,96 +135,98 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                     <span>{t.settings.title}</span>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80">
-                <div className="grid gap-6">
-                     <div className="space-y-2">
-                        <h4 className="font-medium leading-none">{t.settings.appearance_title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                           {t.settings.appearance_desc}
-                        </p>
-                    </div>
-                    <div className="grid gap-4">
-                        <div className="flex items-center justify-between">
-                            <Label htmlFor="theme-mode">{t.settings.mode_label}</Label>
-                            <div className="flex items-center gap-2">
-                                <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("light")}>
-                                    <Sun className="h-4 w-4" />
-                                </Button>
-                                <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("dark")}>
-                                    <Moon className="h-4 w-4" />
-                                </Button>
+            <PopoverContent className="w-80 p-0">
+                <ScrollArea className="h-[500px] p-4">
+                    <div className="grid gap-6">
+                        <div className="space-y-2">
+                            <h4 className="font-medium leading-none">{t.settings.appearance_title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                            {t.settings.appearance_desc}
+                            </p>
+                        </div>
+                        <div className="grid gap-4">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="theme-mode">{t.settings.mode_label}</Label>
+                                <div className="flex items-center gap-2">
+                                    <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("light")}>
+                                        <Sun className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("dark")}>
+                                        <Moon className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="theme-color">{t.settings.color_label}</Label>
+                                <div className="flex flex-wrap gap-2">
+                                    {themes.map(ct => (
+                                        <Button 
+                                            key={ct.name} 
+                                            variant="outline" 
+                                            size="icon" 
+                                            className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
+                                            onClick={() => applyTheme(ct)}
+                                        >
+                                            <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <Separator />
+                        <div className="space-y-2">
+                            <h4 className="font-medium leading-none">{t.settings.language_title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                                {t.settings.language_desc}
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="language-switcher" className="flex items-center gap-2"><LanguageIcon className="h-4 w-4" /> {t.settings.language_label}</Label>
+                            <div className="flex items-center gap-2">
+                                <Button variant={t.locale === 'en' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('en' as Locale)}>English</Button>
+                                <Button variant={t.locale === 'hi' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('hi' as Locale)}>हिन्दी</Button>
+                            </div>
+                        </div>
+
+
+                        <Separator />
+                        
+                        <div className="space-y-2">
+                            <h4 className="font-medium leading-none">{t.settings.profile_title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                            {t.settings.profile_desc}
+                            </p>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="theme-color">{t.settings.color_label}</Label>
-                             <div className="flex flex-wrap gap-2">
-                                {themes.map(ct => (
-                                    <Button 
-                                        key={ct.name} 
-                                        variant="outline" 
-                                        size="icon" 
-                                        className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
-                                        onClick={() => applyTheme(ct)}
-                                    >
-                                        <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
-                                    </Button>
-                                ))}
+                            <Label htmlFor="user-name">{t.settings.name_label}</Label>
+                            <div className="flex items-center gap-2">
+                                <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder={t.settings.name_placeholder} />
+                                <Button size="icon" onClick={handleSaveName}><Save className="h-4 w-4" /></Button>
                             </div>
                         </div>
-                    </div>
 
-                    <Separator />
-                     <div className="space-y-2">
-                        <h4 className="font-medium leading-none">{t.settings.language_title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                            {t.settings.language_desc}
-                        </p>
-                    </div>
-                     <div className="flex items-center justify-between">
-                        <Label htmlFor="language-switcher" className="flex items-center gap-2"><LanguageIcon className="h-4 w-4" /> {t.settings.language_label}</Label>
-                        <div className="flex items-center gap-2">
-                             <Button variant={t.locale === 'en' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('en' as Locale)}>English</Button>
-                            <Button variant={t.locale === 'hi' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('hi' as Locale)}>हिन्दी</Button>
+                        <Separator />
+
+                        <div className="space-y-2">
+                            <h4 className="font-medium leading-none">{t.settings.notifications_title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                            {t.settings.notifications_desc}
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <Label htmlFor="notifications" className="flex items-center gap-2">
+                                <Bell className="h-4 w-4"/>
+                                {t.settings.daily_reminders_label}
+                            </Label>
+                            <Switch
+                                id="notifications"
+                                checked={notificationsEnabled}
+                                onCheckedChange={handleNotificationToggle}
+                            />
                         </div>
                     </div>
-
-
-                    <Separator />
-                    
-                     <div className="space-y-2">
-                        <h4 className="font-medium leading-none">{t.settings.profile_title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                           {t.settings.profile_desc}
-                        </p>
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="user-name">{t.settings.name_label}</Label>
-                        <div className="flex items-center gap-2">
-                            <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder={t.settings.name_placeholder} />
-                            <Button size="icon" onClick={handleSaveName}><Save className="h-4 w-4" /></Button>
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                     <div className="space-y-2">
-                        <h4 className="font-medium leading-none">{t.settings.notifications_title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                           {t.settings.notifications_desc}
-                        </p>
-                    </div>
-                     <div className="flex items-center justify-between">
-                        <Label htmlFor="notifications" className="flex items-center gap-2">
-                            <Bell className="h-4 w-4"/>
-                            {t.settings.daily_reminders_label}
-                        </Label>
-                        <Switch
-                            id="notifications"
-                            checked={notificationsEnabled}
-                            onCheckedChange={handleNotificationToggle}
-                        />
-                    </div>
-                </div>
+                </ScrollArea>
             </PopoverContent>
         </Popover>
     )
