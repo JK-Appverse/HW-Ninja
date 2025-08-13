@@ -16,7 +16,7 @@ import { ScrollArea } from "./ui/scroll-area";
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
     { name: "Stone", bg: "240 4.8% 95.9%", primary: "24.6 95% 53.1%" },
-    { name: "Rose", bg: "0 0% 100%", primary: "346.8 77.2% 49.8%" },
+    { name: "Rose", bg: "0 100% 97.1%", primary: "346.8 77.2% 49.8%" },
     { name: "Green", bg: "142.1 76.2% 96.3%", primary: "142.1 70.6% 45.3%" },
     { name: "Blue", bg: "204 100% 96.3%", primary: "217.2 91.2% 59.8%" }
 ];
@@ -40,6 +40,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         if (savedThemeName) {
             const foundTheme = themes.find(t => t.name === savedThemeName) || themes[0];
             setColorTheme(foundTheme);
+            // Re-apply theme on mount to ensure consistency
+            applyTheme(foundTheme, theme);
         }
         const savedUserName = localStorage.getItem("user-name");
         if (savedUserName) {
@@ -55,10 +57,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         }
     }, []);
 
-    const applyTheme = (themeToApply: {name: string, bg: string; primary: string}) => {
+    const applyTheme = (themeToApply: {name: string, bg: string; primary: string}, mode: string | undefined) => {
         const root = document.documentElement;
-        setColorTheme(themeToApply);
-        localStorage.setItem("app-theme", themeToApply.name);
         
         const style = root.style;
         style.setProperty("--primary", themeToApply.primary);
@@ -66,12 +66,26 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         style.setProperty("--sidebar-ring", themeToApply.primary);
         style.setProperty("--ring", themeToApply.primary);
         
-        if (theme === 'light') {
+        if (mode === 'light') {
            style.setProperty("--background", themeToApply.bg);
         } else {
+            // Remove the custom background for dark mode to use the default dark background
             style.removeProperty('--background');
         }
     }
+
+    const handleThemeSelect = (themeToApply: typeof themes[0]) => {
+        setColorTheme(themeToApply);
+        localStorage.setItem("app-theme", themeToApply.name);
+        applyTheme(themeToApply, theme);
+    }
+  
+    useEffect(() => {
+        if (mounted) {
+            handleThemeSelect(colorTheme);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [theme, mounted]);
 
     const handleSaveName = () => {
         localStorage.setItem("user-name", userName);
@@ -110,13 +124,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
             toast({ title: t.settings.notif_disabled_success_title, description: t.settings.notif_disabled_success_desc });
         }
     }
-  
-    useEffect(() => {
-        if (mounted) {
-            applyTheme(colorTheme);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [theme, mounted]);
 
     if (!mounted) {
       return (
@@ -165,7 +172,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                                             variant="outline" 
                                             size="icon" 
                                             className={`h-8 w-8 ${colorTheme.name === ct.name ? 'border-primary' : ''}`}
-                                            onClick={() => applyTheme(ct)}
+                                            onClick={() => handleThemeSelect(ct)}
                                         >
                                             <div className="h-4 w-4 rounded-full" style={{backgroundColor: `hsl(${ct.primary})`}}></div>
                                         </Button>
@@ -231,3 +238,5 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         </Popover>
     )
 }
+
+    
