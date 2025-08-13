@@ -495,9 +495,33 @@ export default function HWNinjaPage() {
                   </div>
                    <div>
                     <Label htmlFor="language" className="font-medium">
-                      Language (Optional)
+                      Language
                     </Label>
-                    <Input id="language" placeholder="e.g., Hindi" className="mt-2" value={language} onChange={(e) => setLanguage(e.target.value)} />
+                    <Select
+                      value={language}
+                      onValueChange={setLanguage}
+                      name="language"
+                    >
+                      <SelectTrigger id="language" className="mt-2">
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Auto-detect</SelectItem>
+                        <SelectItem value="Assamese">Assamese</SelectItem>
+                        <SelectItem value="Bengali">Bengali</SelectItem>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Gujarati">Gujarati</SelectItem>
+                        <SelectItem value="Hindi">Hindi</SelectItem>
+                        <SelectItem value="Kannada">Kannada</SelectItem>
+                        <SelectItem value="Malayalam">Malayalam</SelectItem>
+                        <SelectItem value="Marathi">Marathi</SelectItem>
+                        <SelectItem value="Odia">Odia</SelectItem>
+                        <SelectItem value="Punjabi">Punjabi</SelectItem>
+                        <SelectItem value="Tamil">Tamil</SelectItem>
+                        <SelectItem value="Telugu">Telugu</SelectItem>
+                        <SelectItem value="Urdu">Urdu</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </CardContent>
