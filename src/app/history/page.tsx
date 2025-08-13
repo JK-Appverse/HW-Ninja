@@ -19,14 +19,9 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
     >
-        <path
-            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
-            fill="currentColor"
-        />
-        <path
-            d="M12 6C9.24 6 7 8.24 7 11C7 12.3 7.55 13.45 8.42 14.28L12 18L15.58 14.28C16.45 13.45 17 12.3 17 11C17 8.24 14.76 6 12 6ZM12 13C11.45 13 11 12.55 11 12C11 11.45 11.45 11 12 11C12.55 11 13 11.45 13 12C13 12.55 12.55 13 12 13Z"
-            fill="currentColor"
-        />
+      <path d="M16.5 6.74998C16.5 5.23298 15.267 3.99998 13.75 3.99998H10.25C8.733 3.99998 7.5 5.23298 7.5 6.74998V9.24998C7.5 10.767 8.733 12 10.25 12H13.75C15.267 12 16.5 10.767 16.5 9.24998V6.74998Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 12V16.5C12 17.328 11.328 18 10.5 18H9.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12.0002 20.25C13.2428 20.25 14.2502 19.2426 14.2502 18C14.2502 16.7573 13.2428 15.75 12.0002 15.75C10.7575 15.75 9.75017 16.7573 9.75017 18C9.75017 19.2426 10.7575 20.25 12.0002 20.25Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -53,7 +48,7 @@ export default function HistoryPage() {
                 <SidebarHeader>
                     <div className="flex items-center gap-3 p-2">
                         <HWNinjaLogo className="h-10 w-10 text-primary" />
-                        <h1 className="font-headline text-2xl font-bold text-primary-foreground">
+                        <h1 className="font-headline text-2xl font-bold animated-title">
                         HW Ninja
                         </h1>
                     </div>
