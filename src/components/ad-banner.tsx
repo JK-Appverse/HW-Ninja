@@ -37,12 +37,9 @@ const AdBanner = () => {
 
     // जब वेबसाइट ब्राउज़र में चलेगी, तो AdSense ऑटो विज्ञापन अपने आप इस जगह को भर सकता है
     // या आप यहाँ एक खास AdSense विज्ञापन यूनिट कोड डाल सकते हैं।
-    // अभी के लिए, यह AdSense स्क्रिप्ट पर निर्भर करेगा।
-    return (
-        <div className="flex items-center justify-center min-h-[100px] w-full bg-muted/50 rounded-lg border border-dashed my-8 p-4 text-center">
-             <p className="text-muted-foreground text-sm">AdSense विज्ञापन यहाँ दिखेगा (वेबसाइट के लिए)</p>
-        </div>
-    );
+    // For web, AdSense auto ads will fill this space.
+    // This div is kept for structure but will be empty until ads are served.
+    return <div className="min-h-[50px] w-full my-8"></div>;
   };
   
   return renderAdContent();
