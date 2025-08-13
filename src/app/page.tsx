@@ -431,7 +431,7 @@ export default function HWNinjaPage() {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto">
+                <main className="flex-1 overflow-y-auto bg-gradient-to-br from-background to-slate-900/50">
                     <div className="flex flex-col gap-8 p-4 sm:p-8">
 
                         <Card className="overflow-hidden border-2 border-primary/20 shadow-lg animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
@@ -722,5 +722,3 @@ export default function HWNinjaPage() {
     </SidebarProvider>
   );
 }
-
-    

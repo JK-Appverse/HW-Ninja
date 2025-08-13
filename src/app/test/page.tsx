@@ -375,7 +375,7 @@ export default function TestPage() {
                     <h1 className="text-2xl font-bold animated-title">{t.test.title}</h1>
                     </div>
                 </header>
-                <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+                <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gradient-to-br from-background to-slate-900/50">
                     {renderContent()}
                 </main>
             </div>
@@ -384,5 +384,3 @@ export default function TestPage() {
     </SidebarProvider>
   );
 }
-
-    

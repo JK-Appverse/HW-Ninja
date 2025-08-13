@@ -110,7 +110,7 @@ export default function HistoryPage() {
                             {t.history.clear_history_button}
                         </Button>
                     </header>
-                    <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gradient-to-br from-background to-slate-900/50">
                     {loading ? (
                         <p>{t.history.loading}</p>
                     ) : history.length > 0 ? (
@@ -139,5 +139,3 @@ export default function HistoryPage() {
     </SidebarProvider>
   );
 }
-
-    
