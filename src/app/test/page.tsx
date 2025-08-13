@@ -65,6 +65,7 @@ export default function TestPage() {
   const [subject, setSubject] = useState("Maths");
   const [difficulty, setDifficulty] = useState("Medium");
   const [numQuestions, setNumQuestions] = useState(5);
+  const [language, setLanguage] = useState("English");
 
   const [testData, setTestData] = useState<GenerateTestOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,6 +99,7 @@ export default function TestPage() {
         subject: subject as "Maths" | "Science" | "English" | "Hindi" | "Social Science",
         difficultyLevel: difficulty as "Easy" | "Medium" | "Hard",
         numQuestions,
+        language,
       });
       setTestData(result);
       setAnswers(new Array(result.questions.length).fill(""));
@@ -224,6 +226,29 @@ export default function TestPage() {
                 </Select>
             </div>
         </div>
+         <div>
+            <Label htmlFor="language">Language</Label>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger id="language">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                  <SelectItem value="English">English</SelectItem>
+                  <SelectItem value="Hindi">Hindi</SelectItem>
+                  <SelectItem value="Bengali">Bengali</SelectItem>
+                  <SelectItem value="Marathi">Marathi</SelectItem>
+                  <SelectItem value="Telugu">Telugu</SelectItem>
+                  <SelectItem value="Tamil">Tamil</SelectItem>
+                  <SelectItem value="Gujarati">Gujarati</SelectItem>
+                  <SelectItem value="Urdu">Urdu</SelectItem>
+                  <SelectItem value="Kannada">Kannada</SelectItem>
+                  <SelectItem value="Odia">Odia</SelectItem>
+                  <SelectItem value="Malayalam">Malayalam</SelectItem>
+                  <SelectItem value="Punjabi">Punjabi</SelectItem>
+                  <SelectItem value="Assamese">Assamese</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
       </CardContent>
       <CardFooter>
         <Button onClick={handleStartTest} disabled={isLoading} className="w-full">

@@ -22,6 +22,7 @@ const GenerateTestInputSchema = z.object({
   gradeLevel: z.number().int().min(6).max(12).describe('The grade level of the student.'),
   difficultyLevel: z.enum(['Easy', 'Medium', 'Hard']).describe('The difficulty level of the test.'),
   numQuestions: z.number().int().min(5).max(20).describe('The number of questions for the test.'),
+  language: z.string().optional().describe('The language for the test questions.'),
 });
 export type GenerateTestInput = z.infer<typeof GenerateTestInputSchema>;
 
@@ -42,7 +43,13 @@ const prompt = ai.definePrompt({
     output: { schema: GenerateTestOutputSchema },
     prompt: `You are an expert test creator for students. Create a test with {{{numQuestions}}} multiple-choice questions for a student in grade {{{gradeLevel}}}. The subject is {{{subject}}} and the difficulty level should be {{{difficultyLevel}}}. Each question must have 4 options.
 
-Generate the test questions.`,
+    {{#if language}}
+    Generate the test in the following language: {{{language}}}.
+    {{else}}
+    Generate the test in English.
+    {{/if}}
+
+    Generate the test questions.`,
 });
 
 
