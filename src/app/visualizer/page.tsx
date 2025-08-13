@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -31,6 +30,7 @@ import { generateImage } from '@/ai/flows/generate-image-flow';
 import { Home, History, PencilRuler, Image as ImageIcon, Loader2, Wand2, ThumbsUp, ThumbsDown, Download, AlertCircle } from 'lucide-react';
 import { SettingsPanel } from '@/components/settings-panel';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/language-context';
 
 const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,6 +40,7 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 export default function VisualizerPage() {
+  const { t } = useLanguage();
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -49,8 +50,8 @@ export default function VisualizerPage() {
   const handleGenerateImage = async () => {
     if (!prompt.trim()) {
       toast({
-        title: 'Prompt is empty',
-        description: 'Please enter a concept to visualize.',
+        title: t.visualizer.toast_empty_prompt_title,
+        description: t.visualizer.toast_empty_prompt_desc,
         variant: 'destructive',
       });
       return;
@@ -66,8 +67,8 @@ export default function VisualizerPage() {
     } catch (error) {
       console.error('Error generating image:', error);
       toast({
-        title: 'Error',
-        description: 'Could not generate the image. Please try again.',
+        title: t.visualizer.toast_error_title,
+        description: t.visualizer.toast_error_desc,
         variant: 'destructive',
       });
     } finally {
@@ -86,8 +87,8 @@ export default function VisualizerPage() {
     link.click();
     document.body.removeChild(link);
      toast({
-        title: 'Download Started',
-        description: 'The image is being saved to your device.',
+        title: t.visualizer.toast_download_title,
+        description: t.visualizer.toast_download_desc,
       });
   }
 
@@ -105,22 +106,22 @@ export default function VisualizerPage() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/"><Home /><span>Home</span></Link>
+                  <Link href="/"><Home /><span>{t.sidebar.home}</span></Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/history"><History /><span>History</span></Link>
+                  <Link href="/history"><History /><span>{t.sidebar.history}</span></Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/test"><PencilRuler /><span>Test Yourself</span></Link>
+                  <Link href="/test"><PencilRuler /><span>{t.sidebar.test_yourself}</span></Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive>
-                  <Link href="/visualizer"><ImageIcon /><span>Concept Visualizer</span></Link>
+                  <Link href="/visualizer"><ImageIcon /><span>{t.sidebar.visualizer}</span></Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -134,24 +135,24 @@ export default function VisualizerPage() {
           <header className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-2xl font-bold">Concept Visualizer</h1>
+              <h1 className="text-2xl font-bold">{t.visualizer.title}</h1>
             </div>
           </header>
           <main className="p-4 sm:p-8">
             <div className="max-w-2xl mx-auto flex flex-col gap-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Visualize a Concept</CardTitle>
+                  <CardTitle>{t.visualizer.card_title}</CardTitle>
                   <CardDescription>
-                    Enter a topic, and our AI will generate an image to help you understand it.
+                    {t.visualizer.card_desc}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="concept-prompt" className="text-base">What do you want to learn about?</Label>
+                    <Label htmlFor="concept-prompt" className="text-base">{t.visualizer.prompt_label}</Label>
                     <Input
                       id="concept-prompt"
-                      placeholder="e.g., Photosynthesis, The Water Cycle, Black Holes"
+                      placeholder={t.visualizer.prompt_placeholder}
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       disabled={isLoading}
@@ -159,16 +160,16 @@ export default function VisualizerPage() {
                   </div>
                   <Alert variant="destructive" className="mt-4">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Disclaimer</AlertTitle>
+                    <AlertTitle>{t.visualizer.disclaimer_title}</AlertTitle>
                     <AlertDescription>
-                     HW Ninja can make mistakes. Please double-check the information.
+                     {t.visualizer.disclaimer_desc}
                     </AlertDescription>
                   </Alert>
                 </CardContent>
                 <CardFooter>
                   <Button onClick={handleGenerateImage} disabled={isLoading} className="w-full bg-gradient-to-r from-primary to-purple-500 text-white">
                     {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                    Generate Image
+                    {t.visualizer.generate_button}
                   </Button>
                 </CardFooter>
               </Card>
@@ -179,23 +180,23 @@ export default function VisualizerPage() {
                         <div className="w-full h-full bg-background/50 rounded-lg animate-pulse flex items-center justify-center">
                            <ImageIcon className="h-16 w-16 text-muted-foreground animate-pulse" />
                         </div>
-                        <p className="text-muted-foreground mt-4 text-center">AI is creating your image... this might take a moment.</p>
+                        <p className="text-muted-foreground mt-4 text-center">{t.visualizer.loading_message}</p>
                    </div>
                 )}
                 {generatedImage && (
                   <Card className="overflow-hidden animate-in fade-in-50 zoom-in-95 duration-500">
                     <CardHeader>
-                      <CardTitle>Generated Image for: "{prompt}"</CardTitle>
+                      <CardTitle>{t.visualizer.generated_image_title(prompt)}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <img
                         src={generatedImage}
-                        alt={`AI generated visualization for ${prompt}`}
+                        alt={t.visualizer.generated_image_alt(prompt)}
                         className="w-full h-auto rounded-lg border shadow-md"
                       />
                     </CardContent>
                      <CardFooter className="flex items-center gap-2 p-4">
-                        <p className="text-sm text-muted-foreground mr-auto">Was this image helpful?</p>
+                        <p className="text-sm text-muted-foreground mr-auto">{t.visualizer.feedback_prompt}</p>
                         <Button 
                             variant={feedback === 'like' ? 'secondary' : 'ghost'} 
                             size="icon" 
@@ -216,7 +217,7 @@ export default function VisualizerPage() {
                         </Button>
                         <Button variant="outline" onClick={handleDownload}>
                             <Download className="mr-2 h-4 w-4"/>
-                            Download
+                            {t.visualizer.download_button}
                         </Button>
                     </CardFooter>
                   </Card>

@@ -38,6 +38,7 @@ import TestResult from '@/components/test-result';
 import { Home, History, PencilRuler, Loader2, Timer, Image } from 'lucide-react';
 import { SettingsPanel } from '@/components/settings-panel';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/language-context';
 
 
 const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -61,6 +62,7 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const TEST_DURATION = 5 * 60; // 5 minutes in seconds
 
 export default function TestPage() {
+  const { t } = useLanguage();
   const [gradeLevel, setGradeLevel] = useState("8");
   const [subject, setSubject] = useState("Maths");
   const [difficulty, setDifficulty] = useState("Medium");
@@ -110,8 +112,8 @@ export default function TestPage() {
     } catch (error) {
       console.error('Error generating test:', error);
       toast({
-        title: 'Error',
-        description: 'Could not generate the test. Please try again.',
+        title: t.test.toast_error_title,
+        description: t.test.toast_error_desc,
         variant: 'destructive',
       });
     } finally {
@@ -161,92 +163,92 @@ export default function TestPage() {
   const renderTestSetup = () => (
     <Card className="max-w-xl mx-auto">
       <CardHeader>
-        <CardTitle>Set Up Your Test</CardTitle>
+        <CardTitle>{t.test.setup_title}</CardTitle>
         <CardDescription>
-          Choose your subject, class, and difficulty to start the test.
+          {t.test.setup_desc}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="grade-level">Class</Label>
+            <Label htmlFor="grade-level">{t.home.class_label}</Label>
             <Select value={gradeLevel} onValueChange={setGradeLevel}>
               <SelectTrigger id="grade-level">
-                <SelectValue placeholder="Select class" />
+                <SelectValue placeholder={t.home.class_placeholder} />
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 7 }, (_, i) => i + 6).map((g) => (
                   <SelectItem key={g} value={String(g)}>
-                    Class {g}
+                    {t.home.class_option(g)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject">{t.home.subject_label}</Label>
             <Select value={subject} onValueChange={setSubject}>
               <SelectTrigger id="subject">
-                <SelectValue placeholder="Select subject" />
+                <SelectValue placeholder={t.home.subject_placeholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Maths">Maths</SelectItem>
-                <SelectItem value="Science">Science</SelectItem>
-                <SelectItem value="English">English</SelectItem>
-                <SelectItem value="Hindi">Hindi</SelectItem>
-                <SelectItem value="Social Science">Social Science</SelectItem>
+                <SelectItem value="Maths">{t.subjects.maths}</SelectItem>
+                <SelectItem value="Science">{t.subjects.science}</SelectItem>
+                <SelectItem value="English">{t.subjects.english}</SelectItem>
+                <SelectItem value="Hindi">{t.subjects.hindi}</SelectItem>
+                <SelectItem value="Social Science">{t.subjects.social_science}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-                <Label htmlFor="difficulty">Difficulty</Label>
+                <Label htmlFor="difficulty">{t.home.difficulty_label}</Label>
                 <Select value={difficulty} onValueChange={setDifficulty}>
                 <SelectTrigger id="difficulty">
-                    <SelectValue placeholder="Select difficulty" />
+                    <SelectValue placeholder={t.home.difficulty_placeholder} />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="Easy">Easy</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="Hard">Hard</SelectItem>
+                    <SelectItem value="Easy">{t.difficulty.easy}</SelectItem>
+                    <SelectItem value="Medium">{t.difficulty.medium}</SelectItem>
+                    <SelectItem value="Hard">{t.difficulty.hard}</SelectItem>
                 </SelectContent>
                 </Select>
             </div>
             <div>
-                <Label htmlFor="num-questions">Number of Questions</Label>
+                <Label htmlFor="num-questions">{t.test.num_questions_label}</Label>
                 <Select value={String(numQuestions)} onValueChange={(val) => setNumQuestions(parseInt(val))}>
                 <SelectTrigger id="num-questions">
-                    <SelectValue placeholder="Select number" />
+                    <SelectValue placeholder={t.test.num_questions_placeholder} />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="5">5 Questions</SelectItem>
-                    <SelectItem value="10">10 Questions</SelectItem>
-                    <SelectItem value="15">15 Questions</SelectItem>
+                    <SelectItem value="5">{t.test.num_questions_option(5)}</SelectItem>
+                    <SelectItem value="10">{t.test.num_questions_option(10)}</SelectItem>
+                    <SelectItem value="15">{t.test.num_questions_option(15)}</SelectItem>
                 </SelectContent>
                 </Select>
             </div>
         </div>
          <div>
-            <Label htmlFor="language">Language</Label>
+            <Label htmlFor="language">{t.home.language_label}</Label>
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger id="language">
-                <SelectValue placeholder="Select language" />
+                <SelectValue placeholder={t.home.language_placeholder} />
               </SelectTrigger>
               <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Hindi">Hindi</SelectItem>
-                  <SelectItem value="Assamese">Assamese</SelectItem>
-                  <SelectItem value="Bengali">Bengali</SelectItem>
-                  <SelectItem value="Gujarati">Gujarati</SelectItem>
-                  <SelectItem value="Kannada">Kannada</SelectItem>
-                  <SelectItem value="Malayalam">Malayalam</SelectItem>
-                  <SelectItem value="Marathi">Marathi</SelectItem>
-                  <SelectItem value="Odia">Odia</SelectItem>
-                  <SelectItem value="Punjabi">Punjabi</SelectItem>
-                  <SelectItem value="Tamil">Tamil</SelectItem>
-                  <SelectItem value="Telugu">Telugu</SelectItem>
-                  <SelectItem value="Urdu">Urdu</SelectItem>
+                  <SelectItem value="English">{t.languages.english}</SelectItem>
+                  <SelectItem value="Hindi">{t.languages.hindi}</SelectItem>
+                  <SelectItem value="Assamese">{t.languages.assamese}</SelectItem>
+                  <SelectItem value="Bengali">{t.languages.bengali}</SelectItem>
+                  <SelectItem value="Gujarati">{t.languages.gujarati}</SelectItem>
+                  <SelectItem value="Kannada">{t.languages.kannada}</SelectItem>
+                  <SelectItem value="Malayalam">{t.languages.malayalam}</SelectItem>
+                  <SelectItem value="Marathi">{t.languages.marathi}</SelectItem>
+                  <SelectItem value="Odia">{t.languages.odia}</SelectItem>
+                  <SelectItem value="Punjabi">{t.languages.punjabi}</SelectItem>
+                  <SelectItem value="Tamil">{t.languages.tamil}</SelectItem>
+                  <SelectItem value="Telugu">{t.languages.telugu}</SelectItem>
+                  <SelectItem value="Urdu">{t.languages.urdu}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -254,7 +256,7 @@ export default function TestPage() {
       <CardFooter>
         <Button onClick={handleStartTest} disabled={isLoading} className="w-full">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Start Test
+          {t.test.start_button}
         </Button>
       </CardFooter>
     </Card>
@@ -267,7 +269,7 @@ export default function TestPage() {
       <div className="space-y-6">
         <Card>
             <CardHeader className='flex-row items-center justify-between'>
-                <CardTitle>Question {currentQuestionIndex + 1}/{numQuestions}</CardTitle>
+                <CardTitle>{t.test.question_title(currentQuestionIndex + 1, numQuestions)}</CardTitle>
                 <div className="flex items-center gap-2 text-lg font-semibold text-primary">
                     <Timer className="h-5 w-5"/>
                     <span>{formatTime(timeLeft)}</span>
@@ -288,12 +290,12 @@ export default function TestPage() {
         </Card>
         <div className="flex justify-between">
           <Button onClick={handlePrevQuestion} disabled={currentQuestionIndex === 0}>
-            Previous
+            {t.test.previous_button}
           </Button>
           {currentQuestionIndex < numQuestions - 1 ? (
-            <Button onClick={handleNextQuestion}>Next</Button>
+            <Button onClick={handleNextQuestion}>{t.test.next_button}</Button>
           ) : (
-            <Button onClick={handleFinishTest} className='bg-green-600 hover:bg-green-700'>Finish Test</Button>
+            <Button onClick={handleFinishTest} className='bg-green-600 hover:bg-green-700'>{t.test.finish_button}</Button>
           )}
         </div>
       </div>
@@ -329,7 +331,7 @@ export default function TestPage() {
                 <SidebarMenuButton asChild>
                   <Link href="/">
                     <Home />
-                    <span>Home</span>
+                    <span>{t.sidebar.home}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -337,7 +339,7 @@ export default function TestPage() {
                 <SidebarMenuButton asChild>
                   <Link href="/history">
                     <History />
-                    <span>History</span>
+                    <span>{t.sidebar.history}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -345,7 +347,7 @@ export default function TestPage() {
                 <SidebarMenuButton asChild isActive>
                   <Link href="/test">
                     <PencilRuler />
-                    <span>Test Yourself</span>
+                    <span>{t.sidebar.test_yourself}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -353,7 +355,7 @@ export default function TestPage() {
                 <SidebarMenuButton asChild>
                     <Link href="/visualizer">
                         <Image />
-                        <span>Concept Visualizer</span>
+                        <span>{t.sidebar.visualizer}</span>
                     </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -368,7 +370,7 @@ export default function TestPage() {
           <header className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-2xl font-bold">Test Yourself</h1>
+              <h1 className="text-2xl font-bold">{t.test.title}</h1>
             </div>
           </header>
           <main className="p-4 sm:p-8">

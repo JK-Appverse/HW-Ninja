@@ -20,8 +20,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +53,7 @@ import {
 import { saveHistory } from "@/lib/history";
 import { SettingsPanel } from "@/components/settings-panel";
 import AdBanner from "@/components/ad-banner";
+import { useLanguage } from "@/contexts/language-context";
 
 const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
@@ -133,6 +132,7 @@ const showRewardedAd = (): Promise<boolean> => {
 
 
 export default function HWNinjaPage() {
+  const { t } = useLanguage();
   const [gradeLevel, setGradeLevel] = useState("8");
   const [subject, setSubject] = useState("Maths");
   const [difficulty, setDifficulty] = useState("Medium");
@@ -150,9 +150,7 @@ export default function HWNinjaPage() {
     null
   );
   const [audioDataUri, setAudioDataUri] = useState<string | null>(null);
-  const [aiMessage, setAiMessage] = useState(
-    "Hi there! Let's solve some homework. Fill in the details and your question, and I'll get right to it!"
-  );
+  const [aiMessage, setAiMessage] = useState(t.home.ai_message_initial);
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -177,7 +175,7 @@ export default function HWNinjaPage() {
             
             setTimeout(() => {
                  new Notification("HW Ninja", {
-                    body: "Your test is waiting for you! 🧠",
+                    body: t.home.notification_body,
                     icon: "/icons/icon-192x192.png"
                 });
             }, timeout);
@@ -192,10 +190,12 @@ export default function HWNinjaPage() {
     const storedName = localStorage.getItem("user-name");
     if (storedName) {
       setUserName(storedName);
-      setAiMessage(`Hi ${storedName}! How can I help you today?`);
+      setAiMessage(t.home.ai_message_welcome_back(storedName));
+    } else {
+      setAiMessage(t.home.ai_message_initial)
     }
     handleDailyNotification();
-  }, []);
+  }, [t]);
   
   useEffect(() => {
     if (audioRef.current && audioDataUri) {
@@ -219,8 +219,8 @@ export default function HWNinjaPage() {
   const handleSolve = async () => {
     if (!question.trim() && !image) {
       toast({
-        title: "Uh oh!",
-        description: "Please enter a question or upload an image before I can solve it.",
+        title: t.home.toast_error_no_question_title,
+        description: t.home.toast_error_no_question_desc,
         variant: "destructive",
       });
       return;
@@ -230,12 +230,12 @@ export default function HWNinjaPage() {
     setSolution(null);
     setSimpleExplanation(null);
     setAudioDataUri(null);
-    setAiMessage("Let me think... I'm working on the solution now!");
+    setAiMessage(t.home.ai_message_solving);
 
     // विज्ञापन दिखाने का लॉजिक
     try {
         setIsShowingAd(true);
-        setAiMessage("Loading an ad before we solve...");
+        setAiMessage(t.home.ai_message_loading_ad);
         await showInterstitialAd();
         setIsShowingAd(false);
     } catch (adError) {
@@ -257,7 +257,7 @@ export default function HWNinjaPage() {
       };
       const result = await smartSolve(input);
       setSolution(result);
-      setAiMessage("I've got it! Check out the solution below.");
+      setAiMessage(t.home.ai_message_solution_ready);
       saveHistory({
         ...input,
         language: langParam,
@@ -267,13 +267,11 @@ export default function HWNinjaPage() {
     } catch (error) {
       console.error("Error solving question:", error);
       toast({
-        title: "Error",
-        description: "I couldn't solve the question. Please try again.",
+        title: t.home.toast_error_solve_title,
+        description: t.home.toast_error_solve_desc,
         variant: "destructive",
       });
-      setAiMessage(
-        "Oops, something went wrong. Could you try asking again?"
-      );
+      setAiMessage(t.home.ai_message_error);
     } finally {
       setIsLoading(false);
     }
@@ -284,7 +282,7 @@ export default function HWNinjaPage() {
 
     setIsExplaining(true);
     setSimpleExplanation(null);
-    setAiMessage("Breaking it down for you... one moment!");
+    setAiMessage(t.home.ai_message_explaining);
 
     try {
       const langParam = language === 'auto' ? undefined : language;
@@ -296,15 +294,15 @@ export default function HWNinjaPage() {
         language: langParam,
       });
       setSimpleExplanation(result.simpleExplanation);
-      setAiMessage("Hope this makes it crystal clear!");
+      setAiMessage(t.home.ai_message_explanation_ready);
     } catch (error) {
       console.error("Error explaining solution:", error);
       toast({
-        title: "Error",
-        description: "I couldn't explain the solution. Please try again.",
+        title: t.home.toast_error_explain_title,
+        description: t.home.toast_error_explain_desc,
         variant: "destructive",
       });
-      setAiMessage("I had a little trouble explaining that. Maybe try again?");
+      setAiMessage(t.home.ai_message_explain_error);
     } finally {
       setIsExplaining(false);
     }
@@ -312,32 +310,32 @@ export default function HWNinjaPage() {
 
   const handlePrint = async () => {
     setIsShowingAd(true);
-    setAiMessage("Watch a short ad to download the PDF.");
+    setAiMessage(t.home.ai_message_rewarded_ad);
     try {
         const adWatched = await showRewardedAd();
         if (adWatched) {
             toast({
-                title: "Thanks for watching!",
-                description: "Your download is starting.",
+                title: t.home.toast_rewarded_ad_success_title,
+                description: t.home.toast_rewarded_ad_success_desc,
             });
             window.print();
         } else {
              toast({
-                title: "Ad not completed",
-                description: "Please watch the full ad to download.",
+                title: t.home.toast_rewarded_ad_failed_title,
+                description: t.home.toast_rewarded_ad_failed_desc,
                 variant: "destructive"
             });
         }
     } catch (adError) {
         console.error("Rewarded ad error:", adError);
         toast({
-            title: "Ad Error",
-            description: "Could not load the ad. Please try again.",
+            title: t.home.toast_error_ad_title,
+            description: t.home.toast_error_ad_desc,
             variant: "destructive"
         });
     } finally {
         setIsShowingAd(false);
-        setAiMessage("How can I help you next?");
+        setAiMessage(t.home.ai_message_next_prompt);
     }
   };
 
@@ -346,7 +344,7 @@ export default function HWNinjaPage() {
 
     setIsSpeaking(true);
     setAudioDataUri(null);
-    setAiMessage("Getting the audio ready...");
+    setAiMessage(t.home.ai_message_audio_loading);
 
     try {
         const textToSpeak = `
@@ -356,15 +354,15 @@ export default function HWNinjaPage() {
         `;
         const result = await textToSpeech({ text: textToSpeak });
         setAudioDataUri(result.audioDataUri);
-        setAiMessage("Now playing the solution for you!");
+        setAiMessage(t.home.ai_message_audio_playing);
     } catch (error) {
         console.error("Error generating speech:", error);
         toast({
-            title: "Audio Error",
-            description: "I couldn't generate the audio. Please try again.",
+            title: t.home.toast_error_audio_title,
+            description: t.home.toast_error_audio_desc,
             variant: "destructive",
         });
-        setAiMessage("Sorry, I'm having trouble speaking right now.");
+        setAiMessage(t.home.ai_message_audio_error);
     } finally {
         setIsSpeaking(false);
     }
@@ -388,7 +386,7 @@ export default function HWNinjaPage() {
                 <SidebarMenuButton asChild isActive>
                   <Link href="/">
                     <Home />
-                    <span>Home</span>
+                    <span>{t.sidebar.home}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -396,7 +394,7 @@ export default function HWNinjaPage() {
                 <SidebarMenuButton asChild>
                   <Link href="/history">
                     <History />
-                    <span>History</span>
+                    <span>{t.sidebar.history}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -404,7 +402,7 @@ export default function HWNinjaPage() {
                  <SidebarMenuButton asChild>
                   <Link href="/test">
                     <PencilRuler />
-                    <span>Test Yourself</span>
+                    <span>{t.sidebar.test_yourself}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -412,7 +410,7 @@ export default function HWNinjaPage() {
                 <SidebarMenuButton asChild>
                     <Link href="/visualizer">
                         <Image />
-                        <span>Concept Visualizer</span>
+                        <span>{t.sidebar.visualizer}</span>
                     </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -427,7 +425,7 @@ export default function HWNinjaPage() {
           <header className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-2xl font-bold">Homework Solver</h1>
+              <h1 className="text-2xl font-bold">{t.home.title}</h1>
             </div>
           </header>
 
@@ -437,7 +435,7 @@ export default function HWNinjaPage() {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
                   <div>
                     <Label htmlFor="grade-level" className="font-medium">
-                      Class
+                      {t.home.class_label}
                     </Label>
                     <Select
                       value={gradeLevel}
@@ -445,12 +443,12 @@ export default function HWNinjaPage() {
                       name="grade-level"
                     >
                       <SelectTrigger id="grade-level" className="mt-2">
-                        <SelectValue placeholder="Select class" />
+                        <SelectValue placeholder={t.home.class_placeholder} />
                       </SelectTrigger>
                       <SelectContent>
                         {Array.from({ length: 7 }, (_, i) => i + 6).map((g) => (
                           <SelectItem key={g} value={String(g)}>
-                            Class {g}
+                            {t.home.class_option(g)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -458,7 +456,7 @@ export default function HWNinjaPage() {
                   </div>
                   <div>
                     <Label htmlFor="subject" className="font-medium">
-                      Subject
+                      {t.home.subject_label}
                     </Label>
                     <Select
                       value={subject}
@@ -466,20 +464,20 @@ export default function HWNinjaPage() {
                       name="subject"
                     >
                       <SelectTrigger id="subject" className="mt-2">
-                        <SelectValue placeholder="Select subject" />
+                        <SelectValue placeholder={t.home.subject_placeholder} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Maths">Maths</SelectItem>
-                        <SelectItem value="Science">Science</SelectItem>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Hindi">Hindi</SelectItem>
-                        <SelectItem value="Social Science">Social Science</SelectItem>
+                        <SelectItem value="Maths">{t.subjects.maths}</SelectItem>
+                        <SelectItem value="Science">{t.subjects.science}</SelectItem>
+                        <SelectItem value="English">{t.subjects.english}</SelectItem>
+                        <SelectItem value="Hindi">{t.subjects.hindi}</SelectItem>
+                        <SelectItem value="Social Science">{t.subjects.social_science}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="difficulty" className="font-medium">
-                      Difficulty
+                      {t.home.difficulty_label}
                     </Label>
                     <Select
                       value={difficulty}
@@ -487,18 +485,18 @@ export default function HWNinjaPage() {
                       name="difficulty"
                     >
                       <SelectTrigger id="difficulty" className="mt-2">
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue placeholder={t.home.difficulty_placeholder} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Easy">Easy</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="Hard">Hard</SelectItem>
+                        <SelectItem value="Easy">{t.difficulty.easy}</SelectItem>
+                        <SelectItem value="Medium">{t.difficulty.medium}</SelectItem>
+                        <SelectItem value="Hard">{t.difficulty.hard}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                    <div>
                     <Label htmlFor="language" className="font-medium">
-                      Language
+                      {t.home.language_label}
                     </Label>
                     <Select
                       value={language}
@@ -506,23 +504,23 @@ export default function HWNinjaPage() {
                       name="language"
                     >
                       <SelectTrigger id="language" className="mt-2">
-                        <SelectValue placeholder="Select language" />
+                        <SelectValue placeholder={t.home.language_placeholder} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="auto">Auto-detect</SelectItem>
-                        <SelectItem value="Assamese">Assamese</SelectItem>
-                        <SelectItem value="Bengali">Bengali</SelectItem>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Gujarati">Gujarati</SelectItem>
-                        <SelectItem value="Hindi">Hindi</SelectItem>
-                        <SelectItem value="Kannada">Kannada</SelectItem>
-                        <SelectItem value="Malayalam">Malayalam</SelectItem>
-                        <SelectItem value="Marathi">Marathi</SelectItem>
-                        <SelectItem value="Odia">Odia</SelectItem>
-                        <SelectItem value="Punjabi">Punjabi</SelectItem>
-                        <SelectItem value="Tamil">Tamil</SelectItem>
-                        <SelectItem value="Telugu">Telugu</SelectItem>
-                        <SelectItem value="Urdu">Urdu</SelectItem>
+                        <SelectItem value="auto">{t.languages.auto}</SelectItem>
+                        <SelectItem value="Assamese">{t.languages.assamese}</SelectItem>
+                        <SelectItem value="Bengali">{t.languages.bengali}</SelectItem>
+                        <SelectItem value="English">{t.languages.english}</SelectItem>
+                        <SelectItem value="Gujarati">{t.languages.gujarati}</SelectItem>
+                        <SelectItem value="Hindi">{t.languages.hindi}</SelectItem>
+                        <SelectItem value="Kannada">{t.languages.kannada}</SelectItem>
+                        <SelectItem value="Malayalam">{t.languages.malayalam}</SelectItem>
+                        <SelectItem value="Marathi">{t.languages.marathi}</SelectItem>
+                        <SelectItem value="Odia">{t.languages.odia}</SelectItem>
+                        <SelectItem value="Punjabi">{t.languages.punjabi}</SelectItem>
+                        <SelectItem value="Tamil">{t.languages.tamil}</SelectItem>
+                        <SelectItem value="Telugu">{t.languages.telugu}</SelectItem>
+                        <SelectItem value="Urdu">{t.languages.urdu}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -534,17 +532,17 @@ export default function HWNinjaPage() {
               <div className="lg:col-span-3">
                 <Tabs defaultValue="type">
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="type">Type Question</TabsTrigger>
+                    <TabsTrigger value="type">{t.home.type_question_tab}</TabsTrigger>
                     <TabsTrigger value="upload">
                       <Upload className="mr-2 h-4 w-4" />
-                      Upload Image
+                      {t.home.upload_image_tab}
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="type">
                     <Card>
                       <CardContent className="p-4">
                         <Textarea
-                          placeholder="e.g., What is the powerhouse of the cell?"
+                          placeholder={t.home.question_placeholder}
                           className="min-h-[150px] resize-none text-base"
                           value={question}
                           onChange={(e) => setQuestion(e.target.value)}
@@ -556,7 +554,7 @@ export default function HWNinjaPage() {
                                 onCheckedChange={setTestMode}
                             />
                             <Label htmlFor="test-mode" className="font-medium">
-                                Test Mode
+                                {t.home.test_mode_label}
                             </Label>
                         </div>
                         {testMode && (
@@ -565,11 +563,11 @@ export default function HWNinjaPage() {
                               htmlFor="student-answer"
                               className="font-medium"
                             >
-                              Your Answer
+                              {t.home.your_answer_label}
                             </Label>
                             <Input
                               id="student-answer"
-                              placeholder="Type your answer here before solving"
+                              placeholder={t.home.your_answer_placeholder}
                               className="mt-2"
                               value={studentAnswer}
                               onChange={(e) =>
@@ -595,7 +593,7 @@ export default function HWNinjaPage() {
                           <div className="relative">
                             <img
                               src={image}
-                              alt="Uploaded homework"
+                              alt={t.home.uploaded_image_alt}
                               className="max-h-60 w-auto rounded-md"
                             />
                             <Button
@@ -609,19 +607,19 @@ export default function HWNinjaPage() {
                                 }
                               }}
                             >
-                              Remove
+                              {t.home.remove_button}
                             </Button>
                           </div>
                         ) : (
                           <>
                             <Camera className="h-8 w-8 text-muted-foreground" />
                             <p className="text-muted-foreground">
-                              Click the button to upload an image
+                              {t.home.upload_prompt}
                             </p>
                             <Button
                               onClick={() => fileInputRef.current?.click()}
                             >
-                              Select Image
+                              {t.home.select_image_button}
                             </Button>
                           </>
                         )}
@@ -651,7 +649,7 @@ export default function HWNinjaPage() {
                 ) : (
                   <Wand2 className="mr-2 h-5 w-5" />
                 )}
-                Solve Now
+                {t.home.solve_now_button}
               </Button>
               <Button
                 size="lg"
@@ -665,7 +663,7 @@ export default function HWNinjaPage() {
                 ) : (
                   <BrainCircuit className="mr-2 h-5 w-5" />
                 )}
-                Explain Simply
+                {t.home.explain_simply_button}
               </Button>
                <Button
                 size="lg"
@@ -679,7 +677,7 @@ export default function HWNinjaPage() {
                 ) : (
                   <Volume2 className="mr-2 h-5 w-5" />
                 )}
-                Listen
+                {t.home.listen_button}
               </Button>
               <Button
                 size="lg"
@@ -693,7 +691,7 @@ export default function HWNinjaPage() {
                 ) : (
                   <FileDown className="mr-2 h-5 w-5" />
                 )}
-                Save as PDF
+                {t.home.save_pdf_button}
               </Button>
             </div>
 

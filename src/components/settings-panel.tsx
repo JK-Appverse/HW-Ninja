@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Settings, Moon, Sun, Save, Bell } from "lucide-react";
+import { Settings, Moon, Sun, Save, Bell, Languages as LanguageIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "./ui/switch";
 import { Separator } from "./ui/separator";
+import { useLanguage, type Locale } from "@/contexts/language-context";
 
 const themes = [
     { name: "Default", bg: "210 40% 98%", primary: "217.2 91.2% 59.8%" },
@@ -26,6 +27,7 @@ interface SettingsPanelProps {
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) => {
     const [mounted, setMounted] = useState(false);
     const { theme, setTheme } = useTheme();
+    const { t, setLocale } = useLanguage();
     const [colorTheme, setColorTheme] = useState(themes[0]);
     const [userName, setUserName] = useState('');
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -74,8 +76,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
         localStorage.setItem("user-name", userName);
         onNameChange(userName);
         toast({
-            title: "Success!",
-            description: "Your name has been saved.",
+            title: t.settings.save_name_success_title,
+            description: t.settings.save_name_success_desc,
         });
     }
 
@@ -88,23 +90,23 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
             if (Notification.permission === "granted") {
                 setNotificationsEnabled(true);
                 localStorage.setItem("notifications-enabled", "true");
-                toast({ title: "Success!", description: "Notifications have been enabled." });
+                toast({ title: t.settings.notif_enabled_success_title, description: t.settings.notif_enabled_success_desc });
             } else if (Notification.permission !== "denied") {
                 const permission = await Notification.requestPermission();
                 if (permission === "granted") {
                     setNotificationsEnabled(true);
                     localStorage.setItem("notifications-enabled", "true");
-                    toast({ title: "Success!", description: "Notifications have been enabled." });
+                    toast({ title: t.settings.notif_enabled_success_title, description: t.settings.notif_enabled_success_desc });
                 } else {
-                    toast({ title: "Info", description: "You have blocked notifications.", variant: "destructive" });
+                    toast({ title: t.settings.notif_blocked_info_title, description: t.settings.notif_blocked_info_desc, variant: "destructive" });
                 }
             } else {
-                 toast({ title: "Notifications Blocked", description: "You need to enable notifications in your browser settings.", variant: "destructive" });
+                 toast({ title: t.settings.notif_blocked_error_title, description: t.settings.notif_blocked_error_desc, variant: "destructive" });
             }
         } else {
             setNotificationsEnabled(false);
             localStorage.setItem("notifications-enabled", "false");
-            toast({ title: "Success!", description: "Notifications have been disabled." });
+            toast({ title: t.settings.notif_disabled_success_title, description: t.settings.notif_disabled_success_desc });
         }
     }
   
@@ -129,20 +131,20 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
             <PopoverTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>{t.settings.title}</span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80">
                 <div className="grid gap-6">
                      <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Appearance</h4>
+                        <h4 className="font-medium leading-none">{t.settings.appearance_title}</h4>
                         <p className="text-sm text-muted-foreground">
-                            Customize the look and feel.
+                           {t.settings.appearance_desc}
                         </p>
                     </div>
                     <div className="grid gap-4">
                         <div className="flex items-center justify-between">
-                            <Label htmlFor="theme-mode">Mode</Label>
+                            <Label htmlFor="theme-mode">{t.settings.mode_label}</Label>
                             <div className="flex items-center gap-2">
                                 <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-8" onClick={() => setTheme("light")}>
                                     <Sun className="h-4 w-4" />
@@ -153,7 +155,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="theme-color">Color</Label>
+                            <Label htmlFor="theme-color">{t.settings.color_label}</Label>
                              <div className="flex flex-wrap gap-2">
                                 {themes.map(ct => (
                                     <Button 
@@ -171,17 +173,33 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                     </div>
 
                     <Separator />
+                     <div className="space-y-2">
+                        <h4 className="font-medium leading-none">{t.settings.language_title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                            {t.settings.language_desc}
+                        </p>
+                    </div>
+                     <div className="flex items-center justify-between">
+                        <Label htmlFor="language-switcher" className="flex items-center gap-2"><LanguageIcon className="h-4 w-4" /> {t.settings.language_label}</Label>
+                        <div className="flex items-center gap-2">
+                             <Button variant={t.locale === 'en' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('en' as Locale)}>English</Button>
+                            <Button variant={t.locale === 'hi' ? 'secondary' : 'ghost'} className="h-8" onClick={() => setLocale('hi' as Locale)}>हिन्दी</Button>
+                        </div>
+                    </div>
+
+
+                    <Separator />
                     
                      <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Profile</h4>
+                        <h4 className="font-medium leading-none">{t.settings.profile_title}</h4>
                         <p className="text-sm text-muted-foreground">
-                           Set your name for a personalized experience.
+                           {t.settings.profile_desc}
                         </p>
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="user-name">Name</Label>
+                        <Label htmlFor="user-name">{t.settings.name_label}</Label>
                         <div className="flex items-center gap-2">
-                            <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="Your name" />
+                            <Input id="user-name" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder={t.settings.name_placeholder} />
                             <Button size="icon" onClick={handleSaveName}><Save className="h-4 w-4" /></Button>
                         </div>
                     </div>
@@ -189,15 +207,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onNameChange }) =>
                     <Separator />
 
                      <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Notifications</h4>
+                        <h4 className="font-medium leading-none">{t.settings.notifications_title}</h4>
                         <p className="text-sm text-muted-foreground">
-                           Get daily reminders to practice.
+                           {t.settings.notifications_desc}
                         </p>
                     </div>
                      <div className="flex items-center justify-between">
                         <Label htmlFor="notifications" className="flex items-center gap-2">
                             <Bell className="h-4 w-4"/>
-                            Daily Reminders
+                            {t.settings.daily_reminders_label}
                         </Label>
                         <Switch
                             id="notifications"

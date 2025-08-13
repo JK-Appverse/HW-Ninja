@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Home, History, Trash2, PencilRuler, Image } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SettingsPanel } from "@/components/settings-panel";
+import { useLanguage } from "@/contexts/language-context";
 
 const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
@@ -31,6 +32,7 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const loadedHistory = getHistory();
@@ -61,7 +63,7 @@ export default function HistoryPage() {
                         <SidebarMenuButton asChild>
                             <Link href="/">
                                 <Home />
-                                <span>Home</span>
+                                <span>{t.sidebar.home}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -69,7 +71,7 @@ export default function HistoryPage() {
                         <SidebarMenuButton asChild isActive>
                             <Link href="/history">
                                 <History />
-                                <span>History</span>
+                                <span>{t.sidebar.history}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -77,7 +79,7 @@ export default function HistoryPage() {
                         <SidebarMenuButton asChild>
                             <Link href="/test">
                                 <PencilRuler />
-                                <span>Test Yourself</span>
+                                <span>{t.sidebar.test_yourself}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -85,7 +87,7 @@ export default function HistoryPage() {
                         <SidebarMenuButton asChild>
                             <Link href="/visualizer">
                                 <Image />
-                                <span>Concept Visualizer</span>
+                                <span>{t.sidebar.visualizer}</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -99,16 +101,16 @@ export default function HistoryPage() {
                 <header className="flex items-center justify-between p-4 border-b">
                     <div className="flex items-center gap-4">
                         <SidebarTrigger />
-                        <h1 className="text-2xl font-bold">History</h1>
+                        <h1 className="text-2xl font-bold">{t.history.title}</h1>
                     </div>
                     <Button variant="destructive" onClick={handleClearHistory} disabled={history.length === 0}>
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Clear History
+                        {t.history.clear_history_button}
                     </Button>
                 </header>
                 <main className="p-4 sm:p-8">
                 {loading ? (
-                    <p>Loading history...</p>
+                    <p>{t.history.loading}</p>
                 ) : history.length > 0 ? (
                     <div className="grid gap-6">
                         {history.map((item, index) => (
@@ -118,12 +120,12 @@ export default function HistoryPage() {
                 ) : (
                     <Card className="text-center">
                         <CardHeader>
-                            <CardTitle>No History Yet</CardTitle>
-                            <CardDescription>Start solving some homework to see your history here.</CardDescription>
+                            <CardTitle>{t.history.no_history_title}</CardTitle>
+                            <CardDescription>{t.history.no_history_desc}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button asChild>
-                                <Link href="/">Go to Solver</Link>
+                                <Link href="/">{t.history.go_to_solver_button}</Link>
                             </Button>
                         </CardContent>
                     </Card>

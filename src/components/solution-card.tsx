@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -17,6 +16,7 @@ import { CheckCircle2, XCircle, Lightbulb, ThumbsUp, ThumbsDown, Volume2, Loader
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/language-context";
 
 interface SolutionCardProps {
   solution: SmartSolveOutput;
@@ -39,14 +39,15 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
   onListenClick,
   audioRef,
 }) => {
+  const { t } = useLanguage();
   const [feedback, setFeedback] = useState<"like" | "dislike" | null>(null);
   const { toast } = useToast();
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copied!",
-      description: "The text has been copied to your clipboard.",
+      title: t.solution_card.copy_success_title,
+      description: t.solution_card.copy_success_desc,
     });
   };
 
@@ -56,12 +57,12 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
     return solution.isCorrect ? (
       <Badge variant="secondary" className="border-green-500 bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
         <CheckCircle2 className="mr-2 h-4 w-4" />
-        Correct
+        {t.solution_card.correct_badge}
       </Badge>
     ) : (
       <Badge variant="destructive">
         <XCircle className="mr-2 h-4 w-4" />
-        Incorrect
+        {t.solution_card.incorrect_badge}
       </Badge>
     );
   };
@@ -70,18 +71,18 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
     <Card className="w-full animate-in fade-in-50 slide-in-from-bottom-10 duration-500">
       <CardHeader>
         <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold font-headline text-primary">Solution</CardTitle>
+            <CardTitle className="text-2xl font-bold font-headline text-primary">{t.solution_card.title}</CardTitle>
             {testMode && <CorrectnessBadge />}
         </div>
-        <CardDescription>Here's the detailed answer and explanation.</CardDescription>
+        <CardDescription>{t.solution_card.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold">Answer:</h3>
+              <h3 className="text-lg font-semibold">{t.solution_card.answer_label}</h3>
               <Button variant="ghost" size="icon" onClick={() => handleCopy(solution.solution)}>
                 <Copy className="h-4 w-4" />
-                <span className="sr-only">Copy Answer</span>
+                <span className="sr-only">{t.solution_card.copy_answer_button}</span>
               </Button>
             </div>
             <p className="text-foreground/90 whitespace-pre-wrap rounded-md bg-muted p-4">
@@ -92,7 +93,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
         <Separator />
 
         <div>
-          <h3 className="mb-2 text-lg font-semibold">Explanation:</h3>
+          <h3 className="mb-2 text-lg font-semibold">{t.solution_card.explanation_label}</h3>
           <p className="text-foreground/90 whitespace-pre-wrap rounded-md bg-muted p-4">
             {solution.explanation}
           </p>
@@ -105,12 +106,12 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                      <div className="flex items-center justify-between mb-2">
                         <h3 className="flex items-center text-lg font-semibold">
                             <Lightbulb className="mr-2 h-5 w-5 text-yellow-400" />
-                            Simplified Explanation:
+                            {t.solution_card.simplified_explanation_label}
                         </h3>
                          {!isLoadingExplanation && simpleExplanation && (
                             <Button variant="ghost" size="icon" onClick={() => handleCopy(simpleExplanation)}>
                                 <Copy className="h-4 w-4" />
-                                <span className="sr-only">Copy Simplified Explanation</span>
+                                <span className="sr-only">{t.solution_card.copy_simplified_explanation_button}</span>
                             </Button>
                         )}
                     </div>
@@ -134,7 +135,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
             <Separator />
             <div className="flex flex-col items-center gap-4 pt-4">
                 <audio ref={audioRef} controls className="w-full">
-                    Your browser does not support the audio element.
+                    {t.solution_card.audio_not_supported}
                 </audio>
             </div>
           </>
@@ -142,7 +143,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
 
       </CardContent>
       <CardFooter className="flex-wrap justify-end gap-2">
-            <p className="text-sm text-muted-foreground mr-auto">Was this helpful?</p>
+            <p className="text-sm text-muted-foreground mr-auto">{t.solution_card.feedback_prompt}</p>
             <Button 
                 variant={feedback === 'like' ? 'secondary' : 'ghost'} 
                 size="icon" 
@@ -165,7 +166,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({
                 disabled={isSpeaking}
             >
                 {isSpeaking ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Volume2 className="mr-2 h-4 w-4"/>}
-                Listen
+                {t.solution_card.listen_button}
             </Button>
       </CardFooter>
     </Card>
