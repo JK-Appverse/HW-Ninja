@@ -19,9 +19,34 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M16.5 6.74998C16.5 5.23298 15.267 3.99998 13.75 3.99998H10.25C8.733 3.99998 7.5 5.23298 7.5 6.74998V9.24998C7.5 10.767 8.733 12 10.25 12H13.75C15.267 12 16.5 10.767 16.5 9.24998V6.74998Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12 12V16.5C12 17.328 11.328 18 10.5 18H9.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M12.0002 20.25C13.2428 20.25 14.2502 19.2426 14.2502 18C14.2502 16.7573 13.2428 15.75 12.0002 15.75C10.7575 15.75 9.75017 16.7573 9.75017 18C9.75017 19.2426 10.7575 20.25 12.0002 20.25Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path
+            d="M12 2L3 5V11C3 16.52 7.03 21.74 12 23C16.97 21.74 21 16.52 21 11V5L12 2Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M12 23C12 23 15 20 15 16V11H9V16C9 20 12 23 12 23Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M11 14L9 12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+         <path
+            d="M13 14L15 12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
     </svg>
 );
 
