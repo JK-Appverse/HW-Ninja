@@ -101,7 +101,7 @@ export default function HistoryPage() {
                 <header className="flex items-center justify-between p-4 border-b">
                     <div className="flex items-center gap-4">
                         <SidebarTrigger />
-                        <h1 className="text-2xl font-bold">{t.history.title}</h1>
+                        <h1 className="text-2xl font-bold animated-title">{t.history.title}</h1>
                     </div>
                     <Button variant="destructive" onClick={handleClearHistory} disabled={history.length === 0}>
                         <Trash2 className="mr-2 h-4 w-4" />

@@ -135,7 +135,7 @@ export default function VisualizerPage() {
           <header className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <h1 className="text-2xl font-bold">{t.visualizer.title}</h1>
+              <h1 className="text-2xl font-bold animated-title">{t.visualizer.title}</h1>
             </div>
           </header>
           <main className="p-4 sm:p-8">
