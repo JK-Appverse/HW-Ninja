@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -315,7 +316,7 @@ export default function TestPage() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full bg-background font-body text-foreground">
+      <div className="flex min-h-screen w-full bg-background font-body text-foreground">
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-3 p-2">
@@ -367,17 +368,21 @@ export default function TestPage() {
         </Sidebar>
 
         <SidebarInset>
-          <header className="flex items-center justify-between border-b p-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger />
-              <h1 className="text-2xl font-bold animated-title">{t.test.title}</h1>
+            <div className="flex flex-col h-screen">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b p-4 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                    <SidebarTrigger />
+                    <h1 className="text-2xl font-bold animated-title">{t.test.title}</h1>
+                    </div>
+                </header>
+                <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+                    {renderContent()}
+                </main>
             </div>
-          </header>
-          <main className="p-4 sm:p-8">
-            {renderContent()}
-          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>
   );
 }
+
+    

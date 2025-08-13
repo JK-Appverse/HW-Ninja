@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -94,7 +95,7 @@ export default function VisualizerPage() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full bg-background font-body text-foreground">
+      <div className="flex min-h-screen w-full bg-background font-body text-foreground">
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-3 p-2">
@@ -132,101 +133,105 @@ export default function VisualizerPage() {
         </Sidebar>
 
         <SidebarInset>
-          <header className="flex items-center justify-between border-b p-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger />
-              <h1 className="text-2xl font-bold animated-title">{t.visualizer.title}</h1>
-            </div>
-          </header>
-          <main className="p-4 sm:p-8">
-            <div className="max-w-2xl mx-auto flex flex-col gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.visualizer.card_title}</CardTitle>
-                  <CardDescription>
-                    {t.visualizer.card_desc}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="concept-prompt" className="text-base">{t.visualizer.prompt_label}</Label>
-                    <Input
-                      id="concept-prompt"
-                      placeholder={t.visualizer.prompt_placeholder}
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <Alert variant="destructive" className="mt-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>{t.visualizer.disclaimer_title}</AlertTitle>
-                    <AlertDescription>
-                     {t.visualizer.disclaimer_desc}
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-                <CardFooter>
-                  <Button onClick={handleGenerateImage} disabled={isLoading} className="w-full bg-gradient-to-r from-primary to-purple-500 text-white">
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
-                    {t.visualizer.generate_button}
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <div className="min-h-[400px] w-full">
-                {isLoading && (
-                   <div className="w-full aspect-video rounded-xl bg-muted flex flex-col items-center justify-center p-8 animate-in fade-in-50 duration-500">
-                        <div className="w-full h-full bg-background/50 rounded-lg animate-pulse flex items-center justify-center">
-                           <ImageIcon className="h-16 w-16 text-muted-foreground animate-pulse" />
+            <div className="flex flex-col h-screen">
+                <header className="sticky top-0 z-10 flex items-center justify-between border-b p-4 bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                    <SidebarTrigger />
+                    <h1 className="text-2xl font-bold animated-title">{t.visualizer.title}</h1>
+                    </div>
+                </header>
+                <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+                    <div className="max-w-2xl mx-auto flex flex-col gap-8">
+                    <Card>
+                        <CardHeader>
+                        <CardTitle>{t.visualizer.card_title}</CardTitle>
+                        <CardDescription>
+                            {t.visualizer.card_desc}
+                        </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="concept-prompt" className="text-base">{t.visualizer.prompt_label}</Label>
+                            <Input
+                            id="concept-prompt"
+                            placeholder={t.visualizer.prompt_placeholder}
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            disabled={isLoading}
+                            />
                         </div>
-                        <p className="text-muted-foreground mt-4 text-center">{t.visualizer.loading_message}</p>
-                   </div>
-                )}
-                {generatedImage && (
-                  <Card className="overflow-hidden animate-in fade-in-50 zoom-in-95 duration-500">
-                    <CardHeader>
-                      <CardTitle>{t.visualizer.generated_image_title(prompt)}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <img
-                        src={generatedImage}
-                        alt={t.visualizer.generated_image_alt(prompt)}
-                        className="w-full h-auto rounded-lg border shadow-md"
-                      />
-                    </CardContent>
-                     <CardFooter className="flex items-center gap-2 p-4">
-                        <p className="text-sm text-muted-foreground mr-auto">{t.visualizer.feedback_prompt}</p>
-                        <Button 
-                            variant={feedback === 'like' ? 'secondary' : 'ghost'} 
-                            size="icon" 
-                            onClick={() => setFeedback('like')}
-                            className={feedback === 'like' ? 'text-green-500' : ''}
-                            aria-label="Like"
-                        >
-                            <ThumbsUp className="h-5 w-5"/>
+                        <Alert variant="destructive" className="mt-4">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>{t.visualizer.disclaimer_title}</AlertTitle>
+                            <AlertDescription>
+                            {t.visualizer.disclaimer_desc}
+                            </AlertDescription>
+                        </Alert>
+                        </CardContent>
+                        <CardFooter>
+                        <Button onClick={handleGenerateImage} disabled={isLoading} className="w-full bg-gradient-to-r from-primary to-purple-500 text-white">
+                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
+                            {t.visualizer.generate_button}
                         </Button>
-                        <Button 
-                            variant={feedback === 'dislike' ? 'secondary' : 'ghost'} 
-                            size="icon" 
-                            onClick={() => setFeedback('dislike')}
-                            className={feedback === 'dislike' ? 'text-red-500' : ''}
-                             aria-label="Dislike"
-                        >
-                            <ThumbsDown className="h-5 w-5"/>
-                        </Button>
-                        <Button variant="outline" onClick={handleDownload}>
-                            <Download className="mr-2 h-4 w-4"/>
-                            {t.visualizer.download_button}
-                        </Button>
-                    </CardFooter>
-                  </Card>
-                )}
-              </div>
+                        </CardFooter>
+                    </Card>
+
+                    <div className="min-h-[400px] w-full">
+                        {isLoading && (
+                        <div className="w-full aspect-video rounded-xl bg-muted flex flex-col items-center justify-center p-8 animate-in fade-in-50 duration-500">
+                                <div className="w-full h-full bg-background/50 rounded-lg animate-pulse flex items-center justify-center">
+                                <ImageIcon className="h-16 w-16 text-muted-foreground animate-pulse" />
+                                </div>
+                                <p className="text-muted-foreground mt-4 text-center">{t.visualizer.loading_message}</p>
+                        </div>
+                        )}
+                        {generatedImage && (
+                        <Card className="overflow-hidden animate-in fade-in-50 zoom-in-95 duration-500">
+                            <CardHeader>
+                            <CardTitle>{t.visualizer.generated_image_title(prompt)}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                            <img
+                                src={generatedImage}
+                                alt={t.visualizer.generated_image_alt(prompt)}
+                                className="w-full h-auto rounded-lg border shadow-md"
+                            />
+                            </CardContent>
+                            <CardFooter className="flex items-center gap-2 p-4">
+                                <p className="text-sm text-muted-foreground mr-auto">{t.visualizer.feedback_prompt}</p>
+                                <Button 
+                                    variant={feedback === 'like' ? 'secondary' : 'ghost'} 
+                                    size="icon" 
+                                    onClick={() => setFeedback('like')}
+                                    className={feedback === 'like' ? 'text-green-500' : ''}
+                                    aria-label="Like"
+                                >
+                                    <ThumbsUp className="h-5 w-5"/>
+                                </Button>
+                                <Button 
+                                    variant={feedback === 'dislike' ? 'secondary' : 'ghost'} 
+                                    size="icon" 
+                                    onClick={() => setFeedback('dislike')}
+                                    className={feedback === 'dislike' ? 'text-red-500' : ''}
+                                    aria-label="Dislike"
+                                >
+                                    <ThumbsDown className="h-5 w-5"/>
+                                </Button>
+                                <Button variant="outline" onClick={handleDownload}>
+                                    <Download className="mr-2 h-4 w-4"/>
+                                    {t.visualizer.download_button}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                        )}
+                    </div>
+                    </div>
+                </main>
             </div>
-          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>
   );
 }
+
+    

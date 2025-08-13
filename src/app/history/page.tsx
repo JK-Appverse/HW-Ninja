@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -47,7 +48,7 @@ export default function HistoryPage() {
 
   return (
     <SidebarProvider>
-        <div className="min-h-screen w-full bg-background font-body text-foreground">
+        <div className="flex min-h-screen w-full bg-background font-body text-foreground">
             <Sidebar>
                 <SidebarHeader>
                     <div className="flex items-center gap-3 p-2">
@@ -98,41 +99,45 @@ export default function HistoryPage() {
                 </SidebarFooter>
             </Sidebar>
             <SidebarInset>
-                <header className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-4">
-                        <SidebarTrigger />
-                        <h1 className="text-2xl font-bold animated-title">{t.history.title}</h1>
-                    </div>
-                    <Button variant="destructive" onClick={handleClearHistory} disabled={history.length === 0}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        {t.history.clear_history_button}
-                    </Button>
-                </header>
-                <main className="p-4 sm:p-8">
-                {loading ? (
-                    <p>{t.history.loading}</p>
-                ) : history.length > 0 ? (
-                    <div className="grid gap-6">
-                        {history.map((item, index) => (
-                            <HistoryItemCard key={`${item.timestamp}-${index}`} item={item} />
-                        ))}
-                    </div>
-                ) : (
-                    <Card className="text-center">
-                        <CardHeader>
-                            <CardTitle>{t.history.no_history_title}</CardTitle>
-                            <CardDescription>{t.history.no_history_desc}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button asChild>
-                                <Link href="/">{t.history.go_to_solver_button}</Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                )}
-                </main>
+                <div className="flex flex-col h-screen">
+                    <header className="sticky top-0 z-10 flex items-center justify-between border-b p-4 bg-background/80 backdrop-blur-sm">
+                        <div className="flex items-center gap-4">
+                            <SidebarTrigger />
+                            <h1 className="text-2xl font-bold animated-title">{t.history.title}</h1>
+                        </div>
+                        <Button variant="destructive" onClick={handleClearHistory} disabled={history.length === 0}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t.history.clear_history_button}
+                        </Button>
+                    </header>
+                    <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+                    {loading ? (
+                        <p>{t.history.loading}</p>
+                    ) : history.length > 0 ? (
+                        <div className="grid gap-6">
+                            {history.map((item, index) => (
+                                <HistoryItemCard key={`${item.timestamp}-${index}`} item={item} />
+                            ))}
+                        </div>
+                    ) : (
+                        <Card className="text-center">
+                            <CardHeader>
+                                <CardTitle>{t.history.no_history_title}</CardTitle>
+                                <CardDescription>{t.history.no_history_desc}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button asChild>
+                                    <Link href="/">{t.history.go_to_solver_button}</Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    )}
+                    </main>
+                </div>
             </SidebarInset>
         </div>
     </SidebarProvider>
   );
 }
+
+    
