@@ -137,7 +137,7 @@ export default function HWNinjaPage() {
   const [subject, setSubject] = useState("Maths");
   const [difficulty, setDifficulty] = useState("Medium");
   const [question, setQuestion] = useState("");
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState("auto");
   const [userName, setUserName] = useState("");
   const [studentAnswer, setStudentAnswer] = useState("");
   const [testMode, setTestMode] = useState(false);
@@ -244,6 +244,7 @@ export default function HWNinjaPage() {
     }
 
     try {
+      const langParam = language === 'auto' ? undefined : language;
       const input = {
         question,
         gradeLevel: parseInt(gradeLevel, 10),
@@ -251,7 +252,7 @@ export default function HWNinjaPage() {
         difficultyLevel: difficulty as "Easy" | "Medium" | "Hard",
         ...(testMode && { studentAnswer }),
         ...(image && { photoDataUri: image }),
-        ...(language && { language }),
+        ...(langParam && { language: langParam }),
         ...(userName && { userName }),
       };
       const result = await smartSolve(input);
@@ -259,6 +260,7 @@ export default function HWNinjaPage() {
       setAiMessage("I've got it! Check out the solution below.");
       saveHistory({
         ...input,
+        language: langParam,
         solution: result,
         timestamp: new Date().toISOString(),
       });
@@ -285,12 +287,13 @@ export default function HWNinjaPage() {
     setAiMessage("Breaking it down for you... one moment!");
 
     try {
+      const langParam = language === 'auto' ? undefined : language;
       const result = await explainSimply({
         question,
         solution: solution.solution,
         gradeLevel: parseInt(gradeLevel, 10),
         userName,
-        language: language || undefined,
+        language: langParam,
       });
       setSimpleExplanation(result.simpleExplanation);
       setAiMessage("Hope this makes it crystal clear!");
@@ -506,7 +509,7 @@ export default function HWNinjaPage() {
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Auto-detect</SelectItem>
+                        <SelectItem value="auto">Auto-detect</SelectItem>
                         <SelectItem value="Assamese">Assamese</SelectItem>
                         <SelectItem value="Bengali">Bengali</SelectItem>
                         <SelectItem value="English">English</SelectItem>
