@@ -53,100 +53,30 @@ import {
 } from "@/components/ui/sidebar";
 import { saveHistory } from "@/lib/history";
 import { SettingsPanel } from "@/components/settings-panel";
-import AdBanner from "@/components/ad-banner";
 import { useLanguage } from "@/contexts/language-context";
 
 const HWNinjaLogo: FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-      {...props}
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-  >
-      <defs>
-          <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#4776e6'}} />
-              <stop offset="29%" style={{stopColor: '#8e54e9'}} />
-              <stop offset="67%" style={{stopColor: '#ff2195'}} />
-              <stop offset="100%" style={{stopColor: '#f86343'}} />
-          </linearGradient>
-      </defs>
-      <path
-          d="M50 10C35.5 10 23.5 19 23.5 35.5V50H35.5V35.5C35.5 27.5 42 22 50 22C58 22 64.5 27.5 64.5 35.5V50H76.5V35.5C76.5 19 64.5 10 50 10Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M30 65L50 85L70 65L50 45L30 65Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M42 58L50 66L58 58L50 50L42 58Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M50 85L40 90L50 95L60 90L50 85Z"
-          fill="url(#logo-gradient)"
-      />
-  </svg>
+    <svg
+        {...props}
+        viewBox="0 0 100 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <defs>
+            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{stopColor: '#4776e6'}} />
+                <stop offset="29%" style={{stopColor: '#8e54e9'}} />
+                <stop offset="67%" style={{stopColor: '#ff2195'}} />
+                <stop offset="100%" style={{stopColor: '#f86343'}} />
+            </linearGradient>
+        </defs>
+        <path d="M49.999 16.666C41.866 16.666 35.148 21.65 32.793 28.333H25V20.833H16.667V37.5H25V30C25 24.1 29.433 19.166 35.833 19.166C41.816 19.166 45.833 24.1 45.833 30V37.5H54.167V30C54.167 22.517 49.999 16.666 49.999 16.666Z" fill="url(#logo-gradient)"/>
+        <path d="M83.333 41.666V25H75V41.666H62.5V50H75V62.5H83.333V50H91.667V41.666H83.333Z" fill="url(#logo-gradient)"/>
+        <path d="M66.667 75.433L58.75 83.333L50.833 75.433L50 62.5H51.667L66.667 75.433Z" fill="url(#logo-gradient)"/>
+        <path d="M33.333 75.433L41.25 83.333L49.167 75.433L50 62.5H48.333L33.333 75.433Z" fill="url(#logo-gradient)"/>
+        <path d="M50 87.5L45.833 83.333H54.167L50 87.5Z" fill="url(#logo-gradient)"/>
+    </svg>
 );
-
-
-const isNativeApp = () => {
-    return typeof window !== "undefined" && (window as any).Capacitor?.isNativePlatform();
-}
-
-// =======================================================================
-// || विज्ञापन के लिए ढाँचा (Ads Structure for Web and App)             ||
-// =======================================================================
-
-// Interstitial विज्ञापन दिखाने के लिए फ़ंक्शन
-const showInterstitialAd = (): Promise<void> => {
-  console.log("Interstitial Ad: दिखाने का प्रयास किया जा रहा है...");
-  if (isNativeApp()) {
-    // =======================================================
-    // || यहाँ पर आपको AdMob का Interstitial Ad कोड डालना है। ||
-    // =======================================================
-    console.log("Running in Native App. AdMob Interstitial Ad should be shown here.");
-    return Promise.resolve();
-  } else {
-    // AdSense Auto Ads यह अपने आप संभाल लेगा। वेबसाइट के लिए यह एक सैंपल है।
-    console.log("Running in Web Browser. AdSense will handle ads automatically.");
-    return new Promise(resolve => setTimeout(() => {
-      console.log("Interstitial Ad simulation complete for web.");
-      resolve();
-    }, 1000));
-  }
-};
-
-
-// इनाम वाले (Rewarded) विज्ञापन के लिए फ़ंक्शन
-const showRewardedAd = (): Promise<boolean> => {
-  console.log("Rewarded Ad: दिखाने का प्रयास किया जा रहा है...");
-   if (isNativeApp()) {
-    // ===================================================
-    // || यहाँ पर आपको AdMob का Rewarded Ad कोड डालना है। ||
-    // ===================================================
-    console.log("Running in Native App. AdMob Rewarded Ad should be shown here.");
-    // यह सैंपल मान रहा है कि विज्ञापन देख लिया गया है।
-    return Promise.resolve(true);
-  } else {
-    // AdSense का ऑटो विज्ञापन इसे हैंडल करेगा। यह वेब के लिए एक सैंपल है।
-    const adWatched = true; 
-    return new Promise(resolve => setTimeout(() => {
-      if(adWatched){
-          console.log("Rewarded Ad: इनाम दिया गया (वेब सैंपल)।");
-          resolve(true);
-      } else {
-          console.log("Rewarded Ad: यूज़र ने विज्ञापन बंद कर दिया (वेब सैंपल)।");
-          resolve(false);
-      }
-    }, 1500));
-  }
-};
-// =======================================================================
-// || विज्ञापन ढाँचे का अंत                                             ||
-// =======================================================================
-
 
 export default function HWNinjaPage() {
   const { t } = useLanguage();
@@ -160,7 +90,6 @@ export default function HWNinjaPage() {
   const [testMode, setTestMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isExplaining, setIsExplaining] = useState(false);
-  const [isShowingAd, setIsShowingAd] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [solution, setSolution] = useState<SmartSolveOutput | null>(null);
   const [simpleExplanation, setSimpleExplanation] = useState<string | null>(
@@ -249,17 +178,6 @@ export default function HWNinjaPage() {
     setAudioDataUri(null);
     setAiMessage(t.home.ai_message_solving);
 
-    // विज्ञापन दिखाने का लॉजिक
-    try {
-        setIsShowingAd(true);
-        setAiMessage(t.home.ai_message_loading_ad);
-        await showInterstitialAd();
-        setIsShowingAd(false);
-    } catch (adError) {
-        console.error("Ad error:", adError);
-        setIsShowingAd(false); // विज्ञापन में गड़बड़ी होने पर भी जारी रखें
-    }
-
     try {
       const langParam = language === 'auto' ? undefined : language;
       const input = {
@@ -326,34 +244,11 @@ export default function HWNinjaPage() {
   };
 
   const handlePrint = async () => {
-    setIsShowingAd(true);
-    setAiMessage(t.home.ai_message_rewarded_ad);
-    try {
-        const adWatched = await showRewardedAd();
-        if (adWatched) {
-            toast({
-                title: t.home.toast_rewarded_ad_success_title,
-                description: t.home.toast_rewarded_ad_success_desc,
-            });
-            window.print();
-        } else {
-             toast({
-                title: t.home.toast_rewarded_ad_failed_title,
-                description: t.home.toast_rewarded_ad_failed_desc,
-                variant: "destructive"
-            });
-        }
-    } catch (adError) {
-        console.error("Rewarded ad error:", adError);
-        toast({
-            title: t.home.toast_error_ad_title,
-            description: t.home.toast_error_ad_desc,
-            variant: "destructive"
-        });
-    } finally {
-        setIsShowingAd(false);
-        setAiMessage(t.home.ai_message_next_prompt);
-    }
+    toast({
+        title: t.home.toast_rewarded_ad_success_title,
+        description: t.home.toast_rewarded_ad_success_desc,
+    });
+    window.print();
   };
 
   const handleListen = async () => {
@@ -662,9 +557,9 @@ export default function HWNinjaPage() {
                             size="lg"
                             className="bg-gradient-to-br from-primary to-blue-400 font-bold text-primary-foreground shadow-lg transition-transform hover:scale-105"
                             onClick={handleSolve}
-                            disabled={isLoading || isShowingAd}
+                            disabled={isLoading}
                         >
-                            {isLoading || isShowingAd ? (
+                            {isLoading ? (
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             ) : (
                             <Wand2 className="mr-2 h-5 w-5" />
@@ -676,7 +571,7 @@ export default function HWNinjaPage() {
                             variant="secondary"
                             className="font-bold shadow-lg transition-transform hover:scale-105"
                             onClick={handleExplain}
-                            disabled={!solution || isExplaining || isShowingAd}
+                            disabled={!solution || isExplaining}
                         >
                             {isExplaining ? (
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -690,7 +585,7 @@ export default function HWNinjaPage() {
                             variant="secondary"
                             className="font-bold shadow-lg transition-transform hover:scale-105"
                             onClick={handleListen}
-                            disabled={!solution || isSpeaking || isShowingAd}
+                            disabled={!solution || isSpeaking}
                         >
                             {isSpeaking ? (
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -704,13 +599,9 @@ export default function HWNinjaPage() {
                             variant="outline"
                             className="font-bold shadow-lg transition-transform hover:scale-105"
                             onClick={handlePrint}
-                            disabled={!solution || isShowingAd}
+                            disabled={!solution}
                         >
-                            {isShowingAd ? (
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            ) : (
                             <FileDown className="mr-2 h-5 w-5" />
-                            )}
                             {t.home.save_pdf_button}
                         </Button>
                         </div>
@@ -729,7 +620,6 @@ export default function HWNinjaPage() {
                             />
                         </div>
                         )}
-                        <AdBanner />
                     </div>
                 </main>
             </div>
