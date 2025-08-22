@@ -24,18 +24,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
         <meta name="theme-color" content="#ffffff" />
         
-        {/* AdSense Script */}
-        <Script 
-            async 
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7690223509584791"
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-        />
-
         {/* Google Analytics Scripts */}
         <Script
           strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=G-S2J8K1E9CM`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
         />
         <Script
           id="gtag-init"
@@ -45,7 +37,7 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-S2J8K1E9CM');
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
             `,
           }}
         />
