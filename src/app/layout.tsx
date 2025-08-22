@@ -41,6 +41,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <Script async={true} data-cfasync="false" src="//pl27477544.profitableratecpm.com/f8337d9b11da86d5400e09683f3fe791/invoke.js" strategy="afterInteractive"></Script>
       </head>
       <body className="font-body antialiased">
         <Providers
