@@ -57,22 +57,11 @@ const HWNinjaLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
               <stop offset="100%" style={{stopColor: '#f86343'}} />
           </linearGradient>
       </defs>
-      <path
-          d="M50 10C35.5 10 23.5 19 23.5 35.5V50H35.5V35.5C35.5 27.5 42 22 50 22C58 22 64.5 27.5 64.5 35.5V50H76.5V35.5C76.5 19 64.5 10 50 10Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M30 65L50 85L70 65L50 45L30 65Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M42 58L50 66L58 58L50 50L42 58Z"
-          fill="url(#logo-gradient)"
-      />
-      <path
-          d="M50 85L40 90L50 95L60 90L50 85Z"
-          fill="url(#logo-gradient)"
-      />
+       <path d="M49.999 16.666C41.866 16.666 35.148 21.65 32.793 28.333H25V20.833H16.667V37.5H25V30C25 24.1 29.433 19.166 35.833 19.166C41.816 19.166 45.833 24.1 45.833 30V37.5H54.167V30C54.167 22.517 49.999 16.666 49.999 16.666Z" fill="url(#logo-gradient)"/>
+        <path d="M83.333 41.666V25H75V41.666H62.5V50H75V62.5H83.333V50H91.667V41.666H83.333Z" fill="url(#logo-gradient)"/>
+        <path d="M66.667 75.433L58.75 83.333L50.833 75.433L50 62.5H51.667L66.667 75.433Z" fill="url(#logo-gradient)"/>
+        <path d="M33.333 75.433L41.25 83.333L49.167 75.433L50 62.5H48.333L33.333 75.433Z" fill="url(#logo-gradient)"/>
+        <path d="M50 87.5L45.833 83.333H54.167L50 87.5Z" fill="url(#logo-gradient)"/>
   </svg>
 );
 
@@ -393,6 +382,7 @@ export default function TestPage() {
                 </header>
                 <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gradient-to-br from-background to-slate-900/50">
                     {renderContent()}
+                    <div id="container-f8337d9b11da86d5400e09683f3fe791" className="flex justify-center my-4"></div>
                 </main>
             </div>
         </SidebarInset>
