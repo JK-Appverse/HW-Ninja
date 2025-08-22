@@ -36,16 +36,15 @@ const generateImageFlow = ai.defineFlow(
   async (input) => {
     const { media } = await ai.generate({
         model: 'googleai/gemini-2.0-flash-preview-image-generation',
-        prompt: `You are an expert at creating educational diagrams for students. Your task is to generate a clear, simple, and scientifically accurate diagram for the following topic: "${input.prompt}".
+        prompt: `You are a professional textbook illustrator and subject matter expert. Your task is to generate a scientifically accurate, clear, and simple educational diagram for the following topic: "${input.prompt}".
 
-Instructions for the diagram:
-1. **Clarity and Simplicity:** The diagram must be easy for a student to understand. Avoid clutter.
-2. **Accurate Labeling:** All key parts must be clearly and accurately labeled. Double-check the spellings and placement of labels.
-3. **Pointers:** Use clean lines or arrows to point from the label to the correct part of the diagram.
-4. **Readability:** Use bold, legible text for all labels.
-5. **Educational Focus:** The diagram should be visually appealing and strictly educational. It must be accurate.
+Follow these critical instructions precisely:
+1.  **Accuracy First:** All parts of the diagram and all labels must be 100% factually and scientifically correct.
+2.  **Clear Labeling:** Every important part must be labeled. Use clean, bold, legible text. Use straight pointer lines that clearly connect the label to the correct part.
+3.  **Simplicity is Key:** The diagram must be simple, clean, and easy for a student to understand. Avoid any artistic flair, decorative elements, or background clutter. Focus only on the educational value.
+4.  **Verification:** Before generating the image, double-check that all labels and structures are correct for the requested topic.
 
-Generate the diagram for the topic: "${input.prompt}"`,
+Generate the diagram now for the topic: "${input.prompt}"`,
         config: {
             responseModalities: ['TEXT', 'IMAGE'],
         },
